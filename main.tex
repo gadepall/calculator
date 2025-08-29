@@ -4,6 +4,8 @@
 \usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage{float}
+\usepackage{booktabs}
+\usepackage{url}
 
 \lstset{
   basicstyle=\ttfamily\small,
@@ -48,10 +50,35 @@ Scientific Calculator, Microcontroller, Runge--Kutta Method, Quake III Algorithm
 \section{Introduction}
 The design and implementation of a scientific calculator on microcontrollers requires efficient mathematical algorithms due to limited hardware resources. This paper demonstrates the use of numerical methods such as RK4 for solving differential equations to compute trigonometric and exponential functions, iterative methods for logarithms, the Quake III inverse square root algorithm for efficient computations, and the Shunting Yard algorithm for expression parsing.
 
-\section{Methodology}
+\section{Software Implementation}
+
+Instead of using "general expansion methods" (like Taylor/Maclaurin series with many terms), we reformulated each function as a differential equation.
+ The algorithms used to calculate the values are  RK4 (for ODEs), Newton–Raphson (for refinements like inverse sqrt).
+
+ \subsection{Supported Functions}
+
+\begin{table}[htbp]
+\centering
+\caption{Supported Functions and Operations}
+\label{tab:supported}
+\begin{tabular}{ll}
+\toprule
+\textbf{Category} & \textbf{Functions / Operations} \\
+\midrule
+Trigonometric & $\sin(x), \cos(x), \tan(x)$ \\
+Inverse Trigonometric & $\arcsin(x), \arccos(x), \arctan(x)$ \\
+Exponential / Logarithmic & $e^x, \ln(x)$ \\
+Power / Root & $x^y, \tfrac{1}{\sqrt{x}}$ \\
+Factorial & $n!$ \\
+Basic Arithmetic & $+, -, \times, \div$ \\
+Constants & $\pi, e$ \\
+Input Symbols & Digits $0$–$9$, decimal point, parentheses $(,)$ \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \subsection{Runge--Kutta Method (RK4)}
-The fourth-order Runge--Kutta method is a widely used numerical technique for solving ordinary differential equations of the form:
+The fourth-order Runge--Kutta method (\cite{grewal2014,kreyszig2011}) is a widely used numerical technique for solving ordinary differential equations of the form:
 \begin{align}
 \frac{dy}{dx} = f(x,y), \quad y(x_0)=y_0
 \end{align}
@@ -68,235 +95,164 @@ k_4 &= h f(x_n + h, y_n + k_3).
 \end{align}
 This method achieves $O(h^4)$ accuracy while maintaining computational efficiency. In this work, RK4 is applied to trigonometric and exponential functions by reformulating them as differential equations (e.g., $\sin(x)$ from $y''+y=0$, $\exp(x)$ from $y'=y$).
 
-\subsection{Shunting Yard Algorithm}
-The Shunting Yard algorithm, introduced by Edsger Dijkstra, provides an efficient method for parsing mathematical expressions written in infix notation into postfix (Reverse Polish Notation, RPN). It uses a stack-based approach to handle operator precedence and associativity.  
+\subsection{Trigonometric Functions}
 
-\begin{itemize}
-    \item \textbf{Operands (numbers, variables):} sent directly to the output queue.  
-    \item \textbf{Operators:} pushed onto the operator stack, considering precedence and associativity.  
-    \item \textbf{Parentheses:} used to control order of operations. A right parenthesis triggers popping from the stack until the matching left parenthesis is encountered.  
-\end{itemize}
-
-The postfix expression is then evaluated using a simple stack machine: operands are pushed, and operators pop the required number of operands, perform the operation, and push the result back. This makes it highly efficient for implementation in low-resource systems such as microcontrollers.
-
-\subsection{Quake III Fast Inverse Square Root}
-\textbf{Algorithm:} Bit-level hack and Newton--Raphson iteration for approximating \( \tfrac{1}{\sqrt{x}} \).  
-
-This algorithm, popularized by the Quake III Arena game engine, provides an extremely fast 
-approximation of the inverse square root using integer bit manipulations followed by one 
-Newton--Raphson iteration. Despite its approximate nature, it delivers high accuracy with a 
-fraction of the computational cost of traditional methods. In the context of this work, it is 
-particularly useful for functions such as the arcsine, where the integrand requires repeated 
-evaluation of \( \tfrac{1}{\sqrt{1-x^2}} \).
-
-\section{Trigonometric Functions}
-
-\subsection{Sine Function}
-The sine function is computed by solving the second-order differential equation:
+\subsubsection{Sine Function} \\
+The sine function \cite{ncert12} is computed by solving the second-order differential equation:
 \begin{align}
 \frac{d^2y}{dx^2} + y = 0, \quad y(0)=0, \quad y'(0)=1
 \end{align}
 using the fourth-order Runge--Kutta method.
 
-\begin{lstlisting}[language=C, caption={C Implementation of Sine Function}]
-#define PI 3.14159265358979323846
-#define H 0.05
+System:
+\begin{align}
+\frac{dy}{dx}=z, \quad \frac{dz}{dx}=-y, \quad y(0)=0, \; z(0)=1
+\end{align}
 
-double sine(double x_target) {
-  double x=0, y=0, z=1;
-  double k1,k2,k3,k4,l1,l2,l3,l4;
-  int k=(int)(x_target/PI);
-  double angle=fmod(x_target,2*PI);
+RK4 step values:
+\begin{align}
+k_1 &= h z_n, \\
+l_1 &= -h y_n, \\
+k_2 &= h \left(z_n+\tfrac{l_1}{2}\right), \\
+l_2 &= -h \left(y_n+\tfrac{k_1}{2}\right), \\
+k_3 &= h \left(z_n+\tfrac{l_2}{2}\right), \\
+l_3 &= -h \left(y_n+\tfrac{k_2}{2}\right), \\
+k_4 &= h(z_n+l_3), \\
+l_4 &= -h(y_n+k_3), \\
+y_{n+1} &= y_n+\frac{1}{6}(k_1+2k_2+2k_3+k_4), \\
+z_{n+1} &= z_n+\tfrac{1}{6}(l_1+2l_2+2l_3+l_4).
+\end{align}
 
-  while (x<angle) {
-    if (x+H>angle) H=angle-x;
-    k1=H*z; l1=-H*y;
-    k2=H*(z+l1/2.0); l2=-H*(y+k1/2.0);
-    k3=H*(z+l2/2.0); l3=-H*(y+k2/2.0);
-    k4=H*(z+l3); l4=-H*(y+k3);
-    y+=(k1+2*k2+2*k3+k4)/6.0;
-    z+=(l1+2*l2+2*l3+l4)/6.0;
-    x+=H;
-  }
-  return y;
-}
-\end{lstlisting}
+\subsubsection{Cosine Function} \\
+The cosine function \cite{ncert12} is computed by solving the second-order differential equation:
+\begin{align}
+\frac{d^2y}{dx^2} + y = 0, \quad y(0)=1, \quad y'(0)=0
+\end{align}
 
-\subsection{Cosine Function}
-Cosine can be derived similarly with initial conditions $y(0)=1$, $y'(0)=0$.
+The RK4 recursion is identical to the sine case, but with different initial conditions.
 
-\begin{lstlisting}[language=C, caption={C Implementation of Cosine Function}]
-double cosine(double x_target) {
-  double x=0, y=1, z=0;
-  double k1,k2,k3,k4,l1,l2,l3,l4;
-  int k=(int)(x_target/PI);
-  double angle=fmod(x_target,2*PI);
 
-  while (x<angle) {
-    if (x+H>angle) H=angle-x;
-    k1=H*z; l1=-H*y;
-    k2=H*(z+l1/2.0); l2=-H*(y+k1/2.0);
-    k3=H*(z+l2/2.0); l3=-H*(y+k2/2.0);
-    k4=H*(z+l3); l4=-H*(y+k3);
-    y+=(k1+2*k2+2*k3+k4)/6.0;
-    z+=(l1+2*l2+2*l3+l4)/6.0;
-    x+=H;
-  }
-  return y;
-}
-\end{lstlisting}
-
-\subsection{Tangent Function}
-Tangent is implemented as the ratio of sine and cosine:
+\subsubsection{Tangent Function} \\
+Tangent \cite{ncert12} is implemented as the ratio of sine and cosine:
 \begin{lstlisting}[language=C, caption={C Implementation of Tangent Function}]
 double tangent(double x) {
   return sine(x)/cosine(x);
 }
 \end{lstlisting}
+
+\subsection{Inverse Square Root}
+
+
+\subsubsection*{Quake III Algorithm}
+
+The method obtains an initial approximation by manipulating the IEEE~754 floating-point representation of $x$, then refines it using Newton-Raphson iterations.
+
+\begin{enumerate}
+    \item Bit manipulation with a ``magic constant'' ($0x5f3759df$) produces an initial guess $y_0$.
+    \item A single Newton--Raphson iteration dramatically improves accuracy.
+    \item An optional second iteration yields nearly full precision. \\
+\end{enumerate} 
+
+\subsubsection*{Newton--Raphson Refinement}
+
+We want to approximate
+\begin{align} 
+y = x^{-\frac{1}{2}}.
+\end{align}
+
+Define
+\begin{align}
+f(y) = \frac{1}{y^2} - x, \qquad f'(y) = -\frac{2}{y^3}.
+\end{align}
+
+Applying Newton--Raphson,
+\begin{align}
+y_{k+1} &= y_k - \frac{f(y_k)}{f'(y_k)} \\[6pt]
+        &= y_k - \frac{\tfrac{1}{y_k^2} - x}{-\tfrac{2}{y_k^3}} \\[6pt]
+        &= y_k + \frac{y_k}{2}\left(1 - x y_k^2 \right) \\[6pt]
+        &= y_k \left(\tfrac{3}{2} - \tfrac{1}{2} x y_k^2\right).
+\end{align}
+
+Thus one Newton iteration is simply
+\begin{align}
+y \;\gets\; y \left( 1.5 - 0.5 \, x \, y^2 \right).
+\end{align}
+
 \subsection{Inverse Trigonometric Functions}
-
-
-
-\subsubsection{Arcsine}
-\textbf{Algorithm:} Integrate 
-\[
+\subsubsection{Arcsine} \\
+The ODE for the arcsine function \cite{ncert12} is
+ODE:
+\begin{align}
 \frac{dy}{dx} = \frac{1}{\sqrt{1-x^2}}, \quad y(0)=0
-\]
-using the RK4 method.
+\end{align}
 
-\begin{lstlisting}[language=C, caption={C Implementation of Arcsine Function}]
-double arcsin(double x) {
-    if (x < -1 || x > 1) return 0;
+RK4 step values:
+\begin{align}
+k_1 &= \frac{h}{\sqrt{1-x_n^2}}, \\
+k_2 &= \frac{h}{\sqrt{1-(x_n+h/2)^2}}, \\
+k_3 &= \frac{h}{\sqrt{1-(x_n+h/2)^2}}, \\
+k_4 &= \frac{h}{\sqrt{1-(x_n+h)^2}}, \\
+y_{n+1} &= y_n+\frac{1}{6}(k_1+2k_2+2k_3+k_4)\\
+\end{align}
 
-    double x0 = 0.0, y = 0.0;
-    int steps = x >= 0 ? (int) (x / H): (int) (-x / H); 
-    double step_dir = (x >= 0) ? 1 : -1;
+\subsubsection{Arccosine} \\
+ Use the identity \cite{ncert12}
+\begin{align}
+   \arccos(x) = \frac{\pi}{2} - \arcsin(x) 
+\end{align}
 
-    for (int i = 0; i < steps; i++) {
-        double k1 = H * fast_inv_sqrt(1 - x0*x0);
-        double k2 = H * fast_inv_sqrt(1 - (x0 + step_dir*H/2)*(x0 + step_dir*H/2));
-        double k3 = H * fast_inv_sqrt(1 - (x0 + step_dir*H/2)*(x0 + step_dir*H/2));
-        double k4 = H * fast_inv_sqrt(1 - (x0 + step_dir*H)*(x0 + step_dir*H));
-
-        y += step_dir * (k1 + 2*k2 + 2*k3 + k4) / 6;
-        x0 += step_dir * H;
-    }
-
-    return y;
-}
-\end{lstlisting}
-
-\subsubsection{Arccosine}
-\textbf{Algorithm:} Use the identity
-\[
-\arccos(x) = \frac{\pi}{2} - \arcsin(x)
-\]
-
-\begin{lstlisting}[language=C, caption={C Implementation of Arccosine Function}]
-double arccos(double x){
-    return ((PI/2) - arcsin(x));
-}
-\end{lstlisting}
-\subsubsection{Arctangent}
-\textbf{Algorithm:} Integrate 
-\[
+\subsubsection{Arctangent} \\
+The ODE for the arctan function \cite{ncert12} is
+ODE:
+\begin{align}
 \frac{dy}{dx} = \frac{1}{1+x^2}, \quad y(0)=0
-\]
-using the RK4 method.
+\end{align}
 
-\begin{lstlisting}[language=C, caption={C Implementation of Arctangent Function}]
-double arctan(double x) {
-    double x0 = 0.0, y = 0.0;
-    int steps = x >= 0 ? (int) (x / H): (int) (-x / H); 
-    double step_dir = (x >= 0) ? 1 : -1;
-    
-    for (int i = 0; i < steps; i++) {
-        double k1 = H / (1 + x0*x0);
-        double k2 = H / (1 + (x0 + H/2)*(x0 + H/2));
-        double k3 = H / (1 + (x0 + H/2)*(x0 + H/2));
-        double k4 = H / (1 + (x0 + H)*(x0 + H));
-        
-        y += step_dir * (k1 + 2*k2 + 2*k3 + k4) / 6;
-        x0 += step_dir * H;
-    }
-    
-    return y;
-}
-\end{lstlisting}
-\section{Logarithmic Functions}
+RK4 step values:
+\begin{align}
+k_1 &= \frac{h}{1+x_n^2}, \\
+k_2 &= \frac{h}{1+(x_n+h/2)^2}, \\
+k_3 &= \frac{h}{1+(x_n+h/2)^2}, \\
+k_4 &= \frac{h}{1+(x_n+h)^2}, \\
+y_{n+1} &= y_n+\tfrac{1}{6}(k_1+2k_2+2k_3+k_4).
+\end{align}
 
-The natural logarithm can be obtained by solving the differential equation
-\[
+\subsection{Logarithmic Functions}
+
+The natural logarithm can be obtained by solving the differential equation \cite{ncert12}
+\begin{align}
 \frac{dy}{dx} = \frac{1}{x}, \quad y(1)=0
-\]
+\end{align}
 which has the exact solution $y(x)=\ln(x)$. Using the RK4 method, we can approximate $\ln(x)$ by integrating this ODE from $x=1$ to the target value.
 
-\begin{lstlisting}[language=C, caption={C Implementation of Logarithm Function using RK4}]
-double logarithm(double x_target) {
-  double x = 1.0, y = 0.0;
-  double h = 0.001; // step size
-  double k1, k2, k3, k4;
+RK4 step values:
 
-  while (x < x_target) {
-    if (x + h > x_target) h = x_target - x;
-    k1 = h * (1.0 / x);
-    k2 = h * (1.0 / (x + h/2.0));
-    k3 = h * (1.0 / (x + h/2.0));
-    k4 = h * (1.0 / (x + h));
-    y += (k1 + 2*k2 + 2*k3 + k4) / 6.0;
-    x += h;
-  }
-  return y;
-}
-\end{lstlisting}
+\begin{align}
+k_1 &= \frac{h}{x_n}, \\
+k_2 &= \frac{h}{x_n+h/2}, \\
+k_3 &= \frac{h}{x_n+h/2}, \\
+k_4 &= \frac{h}{x_n+h}, \\
+y_{n+1} &= y_n+\frac{h}{6}\left(\frac{1}{x_n}+\frac{4}{x_n+h/2}+\frac{1}{x_n+h}\right).
+\end{align}
 
+\subsection{Exponential Functions}
 
-\section{Exponential Functions}
+\subsubsection{Power Function} \\
+The power function $y=x^w$ \cite{ncert12} satisfies
+\begin{align}
+\frac{dy}{dx} = \frac{w}{x}y, \quad y(1)=1
+\end{align}
 
-\subsection{Power Function}
-\textbf{Algorithm:} Solve 
-\[
-\frac{dy}{dx} = \frac{w}{x} y, \quad y(1)=1
-\]
-with RK4.
+RK4 step values:
 
-\begin{lstlisting}[language=C, caption={Power Function Implementation}]
-double pow(double x, double w) {
-  if (x == 0) return 0;  
-  if (w == 0) return 1;  
+\begin{align}
+k_1 &= h \cdot \frac{w}{x_n}y_n, \\
+k_2 &= h \cdot \frac{w}{x_n+\tfrac{h}{2}}\left(y_n+\tfrac{k_1}{2}\right), \\
+k_3 &= h \cdot \frac{w}{x_n+\tfrac{h}{2}}\left(y_n+\tfrac{k_2}{2}\right), \\
+k_4 &= h \cdot \frac{w}{x_n+h}\left(y_n+k_3\right), \\
+y_{n+1} &= y_n+\tfrac{1}{6}(k_1+2k_2+2k_3+k_4).
+\end{align}
 
-  double x0 = 1.0;
-  double y = 1.0;  // y(1) = 1
-
-  int steps = (int)((x - x0) / H);
-  if (x < 1.0) {
-    steps = (int)((x0 - x) / H);
-    steps = -steps;  // Negative steps for x < 1
-  }
-
-  for (int i = 0; i < steps; i++) {
-    double k1 = H * (w * y / x0);
-    double k2 = H * (w * (y + 0.5 * k1) / (x0 + 0.5 * H));
-    double k3 = H * (w * (y + 0.5 * k2) / (x0 + 0.5 * H));
-    double k4 = H * (w * (y + k3) / (x0 + H));
-
-    y += (k1 + 2 * k2 + 2 * k3 + k4) / 6;
-    x0 += H;
-  }
-
-  double remaining = x - x0;
-  if (remaining > 0) {
-    double k1 = remaining * (w * y / x0);
-    double k2 = remaining * (w * (y + 0.5 * k1) / (x0 + 0.5 * remaining));
-    double k3 = remaining * (w * (y + 0.5 * k2) / (x0 + 0.5 * remaining));
-    double k4 = remaining * (w * (y + k3) / (x0 + remaining));
-
-    y += (k1 + 2 * k2 + 2 * k3 + k4) / 6;
-  }
-
-  return y;
-}
-\end{lstlisting}
 \subsection{$e^x$ Function}
 \begin{lstlisting}[language=C, caption={C Implementation of Exponential Function}]
 #define EULER_CONST 2.718281828459045
@@ -316,139 +272,144 @@ unsigned long long factorial(int n) {
 }
 \end{lstlisting}
 
-\section{Expression Parsing}
+\subsection{Expression Parsing}
+
 The Shunting Yard algorithm is employed for converting infix expressions into postfix form for evaluation.
 
-\begin{lstlisting}[language=C, caption={Simplified Parser Implementation}]
-int mode = 0;
+\subsection{Overview}
+The \textbf{Shunting Yard Algorithm}, proposed by Edsger Dijkstra, is a method for converting mathematical expressions in infix notation into postfix notation (Reverse Polish Notation, RPN).  
+It relies on two structures:
+\begin{itemize}
+    \item A \textbf{stack} for operators/functions
+    \item An \textbf{output queue} for the final postfix expression
+\end{itemize}
 
-typedef struct {
-  char data[MAX_SIZE];
-  int top;
-} Stack;
+\subsection{Algorithm Steps}
+\begin{enumerate}
+    \item Initialize an empty stack and output queue.
+    \item For each token:
+    \begin{enumerate}
+        \item Numbers $\rightarrow$ add to output.
+        \item Functions $\rightarrow$ push to stack.
+        \item Operators $\rightarrow$ pop higher/equal precedence operators from stack to output (respecting associativity), then push current operator.
+        \item ``('' $\rightarrow$ push to stack.
+        \item ``)'' $\rightarrow$ pop to output until matching ``('' is found, discard brackets.
+    \end{enumerate}
+    \item After processing, pop remaining operators to output.
+\end{enumerate}
 
-void push(Stack *s, char val) {
-  if (s->top < MAX_SIZE - 1) {
-    s->data[++(s->top)] = val;
-  }
-}
+\subsection{Operator Precedence}
+\begin{table}[htbp]
+\centering
+\caption{Operator Precedence and Associativity}
+\label{tab:precedence}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Operator} & \textbf{Precedence} & \textbf{Associativity} \\
+\midrule
+$\vee$ (power) & 4 & Right \\
+$*$, $/$ & 3 & Left \\
+$+$, $-$ & 2 & Left \\
+\bottomrule
+\end{tabular}
+\end{table}
+\subsection{Example}
+For the expression $3 + 4 * 2 / (1 - 5)$, the Shunting Yard Algorithm yields the postfix form:
+\begin{align}
+3 \ 4 \ 2 \ * \ 1 \ 5 \ - \ / \ +
+\end{align}
 
-char pop(Stack *s) {
-  return (s->top >= 0) ? s->data[(s->top)--] : '\0';
-}
+Algorithmic Steps :
 
-char peek(Stack *s) {
-  return (s->top >= 0) ? s->data[s->top] : '\0';
-}
+\begin{table}[htbp]
+\centering
+\caption{Shunting Yard Example for $3 + 4 * 2 / (1 - 5)$}
+\label{tab:example}
+\begin{tabular}{llll}
+\toprule
+\textbf{Token} & \textbf{Action} & \textbf{Stack} & \textbf{Output} \\
+\midrule
+3 & Add to output &  & 3 \\
++ & Push to stack & + & 3 \\
+4 & Add to output & + & 3 4 \\
+* & Push to stack & + * & 3 4 \\
+2 & Add to output & + * & 3 4 2 \\
+/ & Pop *, push / & + / & 3 4 2 * \\
+( & Push to stack & + / ( & 3 4 2 * \\
+1 & Add to output & + / ( & 3 4 2 * 1 \\
+- & Push to stack & + / ( - & 3 4 2 * 1 \\
+5 & Add to output & + / ( - & 3 4 2 * 1 5 \\
+) & Pop until ( & + / & 3 4 2 * 1 5 - \\
+End & Pop stack &  & 3 4 2 * 1 5 - / + \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-int precedence(char op) {
-  switch (op) {
-    case '+': case '-': return 1;
-    case '*': case '/': return 2;
-    case '^': return 3;
-    default: return 0;
-  }
-}
+\subsection{Reverse Polish Notation (RPN)}
+Reverse Polish Notation, also known as postfix notation, is a way of writing mathematical expressions in which 
+operators follow their operands. Unlike infix notation (e.g., $3 + 4$), RPN eliminates the need for parentheses by 
+unambiguously encoding operator precedence.
 
-int isFunction(char c) {
-  return (c == 's' || c == 'c' || c == 't' || c == 'e' || c == 'l' || c == 'z' || c == 'y' || c == 'x' || c == 'q');
-}
+\begin{itemize}
+    \item Example (infix): $3 + 4$
+    \item Equivalent RPN: $3 \ 4 \ +$
+\end{itemize}
 
-// Convert infix to postfix
-void shunting_yard(const char *expr, char *output) {
-  Stack operators = {.top = -1};
-  int j = 0;
-  for (int i = 0; expr[i] != '\0'; i++) {
-    if (isdigit(expr[i]) || expr[i] == '.') {
-      while (isdigit(expr[i]) || expr[i] == '.') {
-        output[j++] = expr[i++];
-      }
-      output[j++] = ' ';
-      i--;
-    } else if (isFunction(expr[i])) {
-      push(&operators, expr[i]);
-    } else if (expr[i] == '(') {
-      push(&operators, expr[i]);
-      unmatched_brackets++;
-    } else if (expr[i] == ')') {
-      while (peek(&operators) != '(') {
-        output[j++] = pop(&operators);
-        output[j++] = ' ';
-      }
-      unmatched_brackets--;
-      pop(&operators); // Remove '('
-      if (isFunction(peek(&operators))) {
-        output[j++] = pop(&operators);
-        output[j++] = ' ';
-      }
-    } else if (strchr("+-*/^!", expr[i])) {
-      while (operators.top != -1 && precedence(peek(&operators)) >= precedence(expr[i])) {
-        output[j++] = pop(&operators);
-        output[j++] = ' ';
-      }
-      push(&operators, expr[i]);
-    }
-  }
-  while (operators.top != -1) {
-    output[j++] = pop(&operators);
-    output[j++] = ' ';
-  }
-  output[j] = '\0';
-}
+This simplicity makes RPN especially suitable for evaluation using a stack-based algorithm.
 
-// Evaluate postfix expression
-double evaluate_rpn(const char *postfix) {
-  double stack[MAX_SIZE];
-  int top = -1;
-  char token[20];
-  int i = 0;
-  while (*postfix) {
-    if (isdigit(*postfix) || *postfix == '.') {
-      sscanf(postfix, "%s", token);
-      stack[++top] = atof(token);
-      while (*postfix && *postfix != ' ') postfix++;
-    } else if (strchr("!", *postfix)){
-      double a = stack[--top];
-//      stack[++top] = factorial(a);
-    } else if (strchr("+-*/^", *postfix)) {
-      double b = stack[top--];
-      double a = stack[top--];
-      switch (*postfix) {
-        case '+': stack[++top] = a + b; break;
-        case '-': stack[++top] = a - b; break;
-        case '*': stack[++top] = a * b; break;
-        case '/': stack[++top] = a / b; break;
-        case '^': stack[++top] = pow(a, b); break;
-      }
-    } else if (isFunction(*postfix)) {
-      double a = stack[top--];
-      switch (*postfix) {
-        case 's': stack[++top] = sin(a); break;
-        case 'c': stack[++top] = cos(a); break;
-        case 't': stack[++top] = tan(a); break;
-        case 'e': stack[++top] = exp(a); break;
-        case 'l': stack[++top] = ln(a); break;
-        case 'z': stack[++top] = arcsin(a); break;
-        case 'y': stack[++top] = arccos(a); break;
-        case 'x': stack[++top] = arctan(a); break;
-      }
-    }
-    postfix++;
-  }
-  return stack[top];
-}
-factorial : simple for loop
-c
-double factorial(double x){
-  double result = 1;
-  while (x > 1){
-    result *= x;
-    x -= 1;
-  }
-  return result;
+
+\subsection{Evaluating RPN}
+Evaluation of RPN uses a stack:
+\begin{enumerate}
+    \item Scan tokens left to right.
+    \item Push numbers on the stack.
+    \item For operators, pop required operands, apply operation, push result.
+\end{enumerate}
+
+For the above example, evaluating the postfix expression gives the result $1$ as expected .
+
+\subsection{Complexity and Applications}
+The algorithm runs in $O(n)$ time, where $n$ is the number of tokens, since each token is processed once.  
+Combined with RPN evaluation, it provides an efficient method for handling expressions in calculators, compilers, and symbolic computation systems.
+
+\subsection{Function Handling}
+The Shunting Yard Algorithm can also be used to implement functions such as $\sin(x)$, $\cos(x)$, and others. Function handling follows these rules:
+
+\begin{enumerate}
+    \item When a function token is encountered, it is pushed onto the operator stack.
+    \item Arguments (possibly separated by commas) are processed as sub-expressions in the usual way.
+    \item When the closing parenthesis ``)'' is reached:
+    \begin{itemize}
+        \item Operators are popped from the stack to the output queue until the matching ``('' is found.
+        \item The function token itself is then moved from the stack to the output queue.
+    \end{itemize}
+\end{enumerate}
+
+As a result, function calls are correctly represented in postfix form. For example:
+\begin{align}
+\sin(x) \;\;\rightarrow\;\; x \ \sin, 
+\end{align}
+
+
+\subsection{Conclusion}
+The Shunting Yard Algorithm, together with RPN evaluation, ensures efficient parsing and evaluation of mathematical expressions. It respects operator precedence, associativity, and bracket handling, making it a cornerstone in expression processing across computing applications.
+
+\subsection{Code Repository}
+The complete C implementations of the algorithms discussed in this paper are available at: \url{https://github.com/gadepall/calculator/tree/main/codes}
+
+
+\begin{lstlisting}[caption={Repository Structure in codes/}]
+codes/
+|-- ShuntingYard.c
+|-- inv_sq_root.c
+|-- inv_trig_func.c
+|-- log.c
+|-- power_func.c
+|-- trig_func.c
 \end{lstlisting}
 
-\section*{References}
+\section{Hardware Implementation}
+
 \begin{thebibliography}{00}
 
 \bibitem{grewal2014}
@@ -457,7 +418,13 @@ B. S. Grewal, \textit{Higher Engineering Mathematics}, 43rd ed. New Delhi, India
 \bibitem{kreyszig2011}
 E. Kreyszig, \textit{Advanced Engineering Mathematics}, 10th ed. Hoboken, NJ, USA: John Wiley \& Sons, 2011.
 
+\bibitem{ncert12}
+National Council of Educational Research and Training (NCERT), 
+\textit{Mathematics: Textbook for Class XII}, Part 1 and 2, New Delhi, India: NCERT, 2006.
+
 \end{thebibliography}
+
+
 
 
 \end{document}
