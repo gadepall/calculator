@@ -133,12 +133,7 @@ The RK4 recursion is identical to the sine case, but with different initial cond
 
 
 \subsubsection{Tangent Function} \\
-Tangent \cite{ncert12} is implemented as the ratio of sine and cosine:
-\begin{lstlisting}[language=C, caption={C Implementation of Tangent Function}]
-double tangent(double x) {
-  return sine(x)/cosine(x);
-}
-\end{lstlisting}
+Tangent \cite{ncert12} is implemented as the ratio of sine and cosine.
 
 \subsection{Inverse Square Root}
 
@@ -254,17 +249,7 @@ y_{n+1} &= y_n+\tfrac{1}{6}(k_1+2k_2+2k_3+k_4).
 \end{align}
 
 \subsection{$e^x$ Function}
-\begin{lstlisting}[language=C, caption={C Implementation of Exponential Function}]
-#define EULER_CONST 2.718281828459045
 
-double exponential(double x_target) {
-
-y = pow(EULER_CONST, x_target)
-  }
-  return y;
-}
-\end{lstlisting}
-\subsection{Factorial Function}
 \begin{lstlisting}[language=C, caption={C Implementation of Factorial Function}]
 unsigned long long factorial(int n) {
   if (n==0) return 1;

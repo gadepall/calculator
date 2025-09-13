@@ -1,8 +1,8 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.5.9)  29 AUG 2025 14:04
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.5.9)  13 SEP 2025 22:26
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**main.tex
+**amin.tex
 (./main.tex
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-04-14>
@@ -331,13 +331,6 @@ File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
 
-LaTeX Warning: Citation `grewal2014' on page 1 undefined on input line 81.
-
-
-LaTeX Warning: Citation `kreyszig2011' on page 1 undefined on input line 81.
-
-
-
 
 ! LaTeX Error: There's no line here to end.
 
@@ -349,9 +342,6 @@ l.101 T
        he sine function \cite{ncert12} is computed by solving the second-ord...
 
 ? 
-
-LaTeX Warning: Citation `ncert12' on page 1 undefined on input line 101.
-
 
 
 [1{/opt/texlive/2025/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/opt/texlive
@@ -371,9 +361,6 @@ l.127 T
 
 ? 
 
-LaTeX Warning: Citation `ncert12' on page 2 undefined on input line 127.
-
-
 ! LaTeX Error: There's no line here to end.
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -381,41 +368,24 @@ Type  H <return>  for immediate help.
  ...                                              
                                                   
 l.136 T
-       angent \cite{ncert12} is implemented as the ratio of sine and cosine:
+       angent \cite{ncert12} is implemented as the ratio of sine and cosine.
 ? 
 
-LaTeX Warning: Citation `ncert12' on page 2 undefined on input line 136.
-
-(/opt/texlive/2025/texmf-dist/tex/latex/listings/lstlang1.sty
-File: lstlang1.sty 2024/09/23 1.10c listings language file
-)
-(/opt/texlive/2025/texmf-dist/tex/latex/listings/lstmisc.sty
-File: lstmisc.sty 2024/09/23 1.10c (Carsten Heinz)
-)
-LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 1
-37.
-
-(/opt/texlive/2025/texmf-dist/tex/latex/psnfss/ot1pcr.fd
-File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
-)
-Underfull \hbox (badness 10000) in paragraph at lines 153--154
+Underfull \hbox (badness 10000) in paragraph at lines 148--149
 
  []
 
 
-
-
 ! LaTeX Error: There's no line here to end.
 
 See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.183 T
+l.178 T
        he ODE for the arcsine function \cite{ncert12} is
 ? 
 
-LaTeX Warning: Citation `ncert12' on page 2 undefined on input line 183.
 
 
 ! LaTeX Error: There's no line here to end.
@@ -424,28 +394,19 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.199  U
+l.194  U
         se the identity \cite{ncert12}
 ? 
 
-LaTeX Warning: Citation `ncert12' on page 2 undefined on input line 199.
-
-
 ! LaTeX Error: There's no line here to end.
 
 See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.205 T
+l.200 T
        he ODE for the arctan function \cite{ncert12} is
 ? 
-
-LaTeX Warning: Citation `ncert12' on page 2 undefined on input line 205.
-
-
-LaTeX Warning: Citation `ncert12' on page 2 undefined on input line 222.
-
 
 
 [2]
@@ -456,13 +417,21 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.241 T
+l.236 T
        he power function $y=x^w$ \cite{ncert12} satisfies
 ? 
+(/opt/texlive/2025/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2024/09/23 1.10c listings language file
+)
+(/opt/texlive/2025/texmf-dist/tex/latex/listings/lstmisc.sty
+File: lstmisc.sty 2024/09/23 1.10c (Carsten Heinz)
+)
+LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 2
+53.
 
-LaTeX Warning: Citation `ncert12' on page 3 undefined on input line 241.
-
-
+(/opt/texlive/2025/texmf-dist/tex/latex/psnfss/ot1pcr.fd
+File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
+)
 
 
 
@@ -488,17 +457,14 @@ L3 programming layer <2025-04-14>
  ***********
 
 
-LaTeX Warning: There were undefined references.
-
-
 LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 
  ) 
 Here is how much of TeX's memory you used:
- 5373 strings out of 469608
- 81500 string characters out of 5446120
- 714147 words of memory out of 5000000
- 32167 multiletter control sequences out of 15000+600000
+ 5354 strings out of 469608
+ 81288 string characters out of 5446120
+ 697450 words of memory out of 5000000
+ 32147 multiletter control sequences out of 15000+600000
  665754 words of font info for 110 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  57i,12n,65p,498b,1265s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -521,7 +487,7 @@ ucrr8a.pfb></opt/texlive/2025/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></opt
 /texlive/2025/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></opt/texlive/2025/t
 exmf-dist/fonts/type1/urw/times/utmr8a.pfb></opt/texlive/2025/texmf-dist/fonts/
 type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (4 pages, 241628 bytes).
+Output written on main.pdf (4 pages, 237891 bytes).
 PDF statistics:
  123 PDF objects out of 1000 (max. 8388607)
  74 compressed objects within 1 object stream
