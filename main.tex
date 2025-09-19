@@ -1,4 +1,6 @@
 \documentclass[conference]{IEEEtran}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage{amsmath}
@@ -47,15 +49,12 @@ This paper presents the implementation of scientific calculator functions such a
 Scientific Calculator, Microcontroller, Runge--Kutta Method, Quake III Algorithm, Shunting Yard Algorithm, C Programming
 \end{IEEEkeywords}
 
-\section{Introduction}
-The design and implementation of a scientific calculator on microcontrollers requires efficient mathematical algorithms due to limited hardware resources. This paper demonstrates the use of numerical methods such as RK4 for solving differential equations to compute trigonometric and exponential functions, iterative methods for logarithms, the Quake III inverse square root algorithm for efficient computations, and the Shunting Yard algorithm for expression parsing.
-
 \section{Software Implementation}
 
 Instead of using "general expansion methods" (like Taylor/Maclaurin series with many terms), we reformulated each function as a differential equation.
  The algorithms used to calculate the values are  RK4 (for ODEs), Newton–Raphson (for refinements like inverse sqrt).
 
- \subsection{Supported Functions}
+\subsection{Supported Functions}
 
 \begin{table}[htbp]
 \centering
@@ -78,26 +77,13 @@ Input Symbols & Digits $0$–$9$, decimal point, parentheses $(,)$ \\
 \end{table}
 
 \subsection{Runge--Kutta Method (RK4)}
-The fourth-order Runge--Kutta method (\cite{grewal2014,kreyszig2011}) is a widely used numerical technique for solving ordinary differential equations of the form:
-\begin{align}
-\frac{dy}{dx} = f(x,y), \quad y(x_0)=y_0
-\end{align}
-It estimates the solution by computing weighted averages of slopes at multiple points within the interval. Given a step size $h$, the next value is computed as:
-\begin{align}
-y_{n+1} = y_n + \frac{1}{6}(k_1 + 2k_2 + 2k_3 + k_4)
-\end{align}
-where
-\begin{align}
-k_1 &= h f(x_n,y_n), \\
-k_2 &= h f(x_n + h/2, y_n + k_1/2), \\
-k_3 &= h f(x_n + h/2, y_n + k_2/2), \\
-k_4 &= h f(x_n + h, y_n + k_3).
-\end{align}
-This method achieves $O(h^4)$ accuracy while maintaining computational efficiency. In this work, RK4 is applied to trigonometric and exponential functions by reformulating them as differential equations (e.g., $\sin(x)$ from $y''+y=0$, $\exp(x)$ from $y'=y$).
+We employ the fourth-order Runge--Kutta (RK4) method \cite{grewal2014,kreyszig2011} 
+to solve ordinary differential equations for trigonometric and exponential functions.
+The full derivation and step-by-step procedure are provided in Appendix~\ref{appendix:rk4}.
 
 \subsection{Trigonometric Functions}
 
-\subsubsection{Sine Function} \\
+\subsubsection{Sine Function} 
 The sine function \cite{ncert12} is computed by solving the second-order differential equation:
 \begin{align}
 \frac{d^2y}{dx^2} + y = 0, \quad y(0)=0, \quad y'(0)=1
@@ -108,6 +94,8 @@ System:
 \begin{align}
 \frac{dy}{dx}=z, \quad \frac{dz}{dx}=-y, \quad y(0)=0, \; z(0)=1
 \end{align}
+
+The $ k_1,k_2,k_3,k_4 $ corresponds to the RK-4 terms of the equation $ \frac{dy}{dx}=z $ and the $ l_1,l_2,l_3,l_4 $ corresponds to the RK-4 terms of the equation $ \frac{dz}{dx}=-y $
 
 RK4 step values:
 \begin{align}
@@ -123,94 +111,42 @@ y_{n+1} &= y_n+\frac{1}{6}(k_1+2k_2+2k_3+k_4), \\
 z_{n+1} &= z_n+\tfrac{1}{6}(l_1+2l_2+2l_3+l_4).
 \end{align}
 
-\subsubsection{Cosine Function} \\
-The cosine function \cite{ncert12} is computed by solving the second-order differential equation:
-\begin{align}
-\frac{d^2y}{dx^2} + y = 0, \quad y(0)=1, \quad y'(0)=0
-\end{align}
-
-The RK4 recursion is identical to the sine case, but with different initial conditions.
+\subsubsection{Cosine Function} 
+The cosine function \cite{ncert12} is computed by $\sin(\frac{\pi}{2} - x)$ .
 
 
-\subsubsection{Tangent Function} \\
-Tangent \cite{ncert12} is implemented as the ratio of sine and cosine.
+
+\subsubsection{Tangent Function} 
+Tangent \cite{ncert12} is implemented as the ratio of sine and cosine:
 
 \subsection{Inverse Square Root}
 
-
-\subsubsection*{Quake III Algorithm}
-
-The method obtains an initial approximation by manipulating the IEEE~754 floating-point representation of $x$, then refines it using Newton-Raphson iterations.
-
-\begin{enumerate}
-    \item Bit manipulation with a ``magic constant'' ($0x5f3759df$) produces an initial guess $y_0$.
-    \item A single Newton--Raphson iteration dramatically improves accuracy.
-    \item An optional second iteration yields nearly full precision. \\
-\end{enumerate} 
-
-\subsubsection*{Newton--Raphson Refinement}
-
-We want to approximate
-\begin{align} 
-y = x^{-\frac{1}{2}}.
-\end{align}
-
-Define
-\begin{align}
-f(y) = \frac{1}{y^2} - x, \qquad f'(y) = -\frac{2}{y^3}.
-\end{align}
-
-Applying Newton--Raphson,
-\begin{align}
-y_{k+1} &= y_k - \frac{f(y_k)}{f'(y_k)} \\[6pt]
-        &= y_k - \frac{\tfrac{1}{y_k^2} - x}{-\tfrac{2}{y_k^3}} \\[6pt]
-        &= y_k + \frac{y_k}{2}\left(1 - x y_k^2 \right) \\[6pt]
-        &= y_k \left(\tfrac{3}{2} - \tfrac{1}{2} x y_k^2\right).
-\end{align}
-
-Thus one Newton iteration is simply
-\begin{align}
-y \;\gets\; y \left( 1.5 - 0.5 \, x \, y^2 \right).
-\end{align}
+\subsubsection{Inverse Square Root}
+The fast inverse square root algorithm (Quake III method) is used to efficiently compute $x^{-1/2}$. 
+Detailed derivation and Newton–Raphson refinement are included in Appendix~\ref{appendix:inv_sqrt}.
 
 \subsection{Inverse Trigonometric Functions}
-\subsubsection{Arcsine} \\
+\subsubsection{Arcsine} 
 The ODE for the arcsine function \cite{ncert12} is
 ODE:
 \begin{align}
 \frac{dy}{dx} = \frac{1}{\sqrt{1-x^2}}, \quad y(0)=0
 \end{align}
 
-RK4 step values:
-\begin{align}
-k_1 &= \frac{h}{\sqrt{1-x_n^2}}, \\
-k_2 &= \frac{h}{\sqrt{1-(x_n+h/2)^2}}, \\
-k_3 &= \frac{h}{\sqrt{1-(x_n+h/2)^2}}, \\
-k_4 &= \frac{h}{\sqrt{1-(x_n+h)^2}}, \\
-y_{n+1} &= y_n+\frac{1}{6}(k_1+2k_2+2k_3+k_4)\\
-\end{align}
-
-\subsubsection{Arccosine} \\
+\subsubsection{Arccosine}
  Use the identity \cite{ncert12}
 \begin{align}
    \arccos(x) = \frac{\pi}{2} - \arcsin(x) 
 \end{align}
 
-\subsubsection{Arctangent} \\
+\subsubsection{Arctangent}
 The ODE for the arctan function \cite{ncert12} is
 ODE:
 \begin{align}
 \frac{dy}{dx} = \frac{1}{1+x^2}, \quad y(0)=0
 \end{align}
 
-RK4 step values:
-\begin{align}
-k_1 &= \frac{h}{1+x_n^2}, \\
-k_2 &= \frac{h}{1+(x_n+h/2)^2}, \\
-k_3 &= \frac{h}{1+(x_n+h/2)^2}, \\
-k_4 &= \frac{h}{1+(x_n+h)^2}, \\
-y_{n+1} &= y_n+\tfrac{1}{6}(k_1+2k_2+2k_3+k_4).
-\end{align}
+
 
 \subsection{Logarithmic Functions}
 
@@ -220,42 +156,87 @@ The natural logarithm can be obtained by solving the differential equation \cite
 \end{align}
 which has the exact solution $y(x)=\ln(x)$. Using the RK4 method, we can approximate $\ln(x)$ by integrating this ODE from $x=1$ to the target value.
 
-RK4 step values:
-
-\begin{align}
-k_1 &= \frac{h}{x_n}, \\
-k_2 &= \frac{h}{x_n+h/2}, \\
-k_3 &= \frac{h}{x_n+h/2}, \\
-k_4 &= \frac{h}{x_n+h}, \\
-y_{n+1} &= y_n+\frac{h}{6}\left(\frac{1}{x_n}+\frac{4}{x_n+h/2}+\frac{1}{x_n+h}\right).
-\end{align}
-
 \subsection{Exponential Functions}
 
-\subsubsection{Power Function} \\
+\subsubsection{Power Function} 
 The power function $y=x^w$ \cite{ncert12} satisfies
 \begin{align}
 \frac{dy}{dx} = \frac{w}{x}y, \quad y(1)=1
 \end{align}
 
-RK4 step values:
+
+
+\subsection{Factorial Function}
+
+The algorithm is a simple recursive function in C
 
 \begin{align}
-k_1 &= h \cdot \frac{w}{x_n}y_n, \\
-k_2 &= h \cdot \frac{w}{x_n+\tfrac{h}{2}}\left(y_n+\tfrac{k_1}{2}\right), \\
-k_3 &= h \cdot \frac{w}{x_n+\tfrac{h}{2}}\left(y_n+\tfrac{k_2}{2}\right), \\
-k_4 &= h \cdot \frac{w}{x_n+h}\left(y_n+k_3\right), \\
-y_{n+1} &= y_n+\tfrac{1}{6}(k_1+2k_2+2k_3+k_4).
+y_n = n \cdot y_{n-1}
 \end{align}
 
-\subsection{$e^x$ Function}
+\cite{GVVSharma}
 
-\begin{lstlisting}[language=C, caption={C Implementation of Factorial Function}]
-unsigned long long factorial(int n) {
-  if (n==0) return 1;
-  return n*factorial(n-1);
-}
-\end{lstlisting}
+\begin{algorithm}
+\caption{Recursive Factorial Function}
+\begin{algorithmic}[1]
+\Function{FactorialRecursive}{x}
+    \If{$x \leq 1$}
+        \State \Return $1$
+    \Else
+        \State \Return $x \times \text{FactorialRecursive}(x-1)$
+    \EndIf
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\begin{table*}[htbp]
+\centering
+\caption{RK4 Update Equations for Single-Variable Functions}
+\label{tab:rk4_single}
+\renewcommand{\arraystretch}{1.4}
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Function} & \textbf{$k_1$} & \textbf{$k_2$} & \textbf{$k_3$} & \textbf{$k_4$} & \textbf{$y_{n+1}$} \\
+\midrule
+
+Arcsine $\arcsin(x)$ &
+$\tfrac{h}{\sqrt{1-x_n^2}}$ &
+$\tfrac{h}{\sqrt{1-(x_n+\tfrac{h}{2})^2}}$ &
+$\tfrac{h}{\sqrt{1-(x_n+\tfrac{h}{2})^2}}$ &
+$\tfrac{h}{\sqrt{1-(x_n+h)^2}}$ &
+$y_n+\tfrac{1}{6}(k_1+2k_2+2k_3+k_4)$ \\
+
+\midrule
+
+Arctangent $\arctan(x)$ &
+$\tfrac{h}{1+x_n^2}$ &
+$\tfrac{h}{1+(x_n+\tfrac{h}{2})^2}$ &
+$\tfrac{h}{1+(x_n+\tfrac{h}{2})^2}$ &
+$\tfrac{h}{1+(x_n+h)^2}$ &
+$y_n+\tfrac{1}{6}(k_1+2k_2+2k_3+k_4)$ \\
+
+\midrule
+
+Natural Log $\ln(x)$ &
+$\tfrac{h}{x_n}$ &
+$\tfrac{h}{x_n+\tfrac{h}{2}}$ &
+$\tfrac{h}{x_n+\tfrac{h}{2}}$ &
+$\tfrac{h}{x_n+h}$ &
+$y_n+\tfrac{1}{6}(k_1+2k_2+2k_3+k_4)$ \\
+
+\midrule
+
+Power $y=x^w$ &
+$h \cdot \tfrac{w}{x_n}y_n$ &
+$h \cdot \tfrac{w}{x_n+\tfrac{h}{2}}\left(y_n+\tfrac{k_1}{2}\right)$ &
+$h \cdot \tfrac{w}{x_n+\tfrac{h}{2}}\left(y_n+\tfrac{k_2}{2}\right)$ &
+$h \cdot \tfrac{w}{x_n+h}\left(y_n+k_3\right)$ &
+$y_n+\tfrac{1}{6}(k_1+2k_2+2k_3+k_4)$ \\
+
+\bottomrule
+\end{tabular}
+\end{table*}
 
 \subsection{Expression Parsing}
 
@@ -282,6 +263,46 @@ It relies on two structures:
     \end{enumerate}
     \item After processing, pop remaining operators to output.
 \end{enumerate}
+
+\begin{algorithm}
+\caption{Shunting Yard Algorithm (Infix to Postfix)}
+\begin{algorithmic}[1]
+\Function{ShuntingYard}{expr}
+    \State Initialize empty stack $operators$
+    \State Initialize empty string $output$
+    \For{each character $c$ in $expr$}
+        \If{$c$ is a number or '.'}
+            \State Append $c$ to $output$ until number ends
+            \State Append space to $output$
+        \ElsIf{$c$ is a function}
+            \State Push $c$ onto $operators$
+        \ElsIf{$c = ($}
+            \State Push $c$ onto $operators$
+            \State Increment $unmatched\_brackets$
+        \ElsIf{$c = )$}
+            \While{Top of $operators \neq ($}
+                \State Pop from $operators$ and append to $output$
+            \EndWhile
+            \State Pop '(' from $operators$
+            \State Decrement $unmatched\_brackets$
+            \If{Top of $operators$ is a function}
+                \State Pop function and append to $output$
+            \EndIf
+        \ElsIf{$c$ is an operator in $\{+,-,*,/,^,!\}$}
+            \While{$operators$ not empty \textbf{and} 
+                   precedence(Top of $operators$) $\geq$ precedence($c$)}
+                \State Pop from $operators$ and append to $output$
+            \EndWhile
+            \State Push $c$ onto $operators$
+        \EndIf
+    \EndFor
+    \While{$operators$ not empty}
+        \State Pop from $operators$ and append to $output$
+    \EndWhile
+    \State \Return $output$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
 
 \subsection{Operator Precedence}
 \begin{table}[htbp]
@@ -329,7 +350,6 @@ End & Pop stack &  & 3 4 2 * 1 5 - / + \\
 \bottomrule
 \end{tabular}
 \end{table}
-
 \subsection{Reverse Polish Notation (RPN)}
 Reverse Polish Notation, also known as postfix notation, is a way of writing mathematical expressions in which 
 operators follow their operands. Unlike infix notation (e.g., $3 + 4$), RPN eliminates the need for parentheses by 
@@ -392,7 +412,6 @@ codes/
 |-- power_func.c
 |-- trig_func.c
 \end{lstlisting}
-
 
 \section{Hardware Implementation}
 
@@ -692,10 +711,73 @@ The hardware circuit of calculator,
 \end{figure}
 
 
+\appendices
+
+\section{Runge--Kutta Method (RK4)}
+
+\label{appendix:rk4}
+The RK4 method is a numerical technique to solve
+\begin{align}
+\frac{dy}{dx} = f(x,y), \quad y(x_0)=y_0
+\end{align}
+with step size $h$. The next value is calculated as:
+\begin{align}
+y_{n+1} = y_n + \frac{1}{6}(k_1 + 2 k_2 + 2 k_3 + k_4)
+\end{align}
+where
+\begin{align}
+k_1 &= h f(x_n, y_n), \\
+k_2 &= h f(x_n + h/2, y_n + k_1/2), \\
+k_3 &= h f(x_n + h/2, y_n + k_2/2), \\
+k_4 &= h f(x_n + h, y_n + k_3).
+\end{align}
+
+\subsubsection*{Quake III Algorithm}
+
+\label{appendix:inv_sqrt}
+
+The method obtains an initial approximation by manipulating the IEEE~754 floating-point representation of $x$, then refines it using Newton-Raphson iterations.
+
+\begin{enumerate}
+    \item Bit manipulation with a ``magic constant'' ($0x5f3759df$) produces an initial guess $y_0$.
+    \item A single Newton--Raphson iteration dramatically improves accuracy.
+    \item An optional second iteration yields nearly full precision. \\
+\end{enumerate} 
+
+\subsubsection*{Newton--Raphson Refinement}
+
+We want to approximate
+\begin{align} 
+y = x^{-\frac{1}{2}}.
+\end{align}
+
+Define
+\begin{align}
+f(y) = \frac{1}{y^2} - x, \qquad f'(y) = -\frac{2}{y^3}.
+\end{align}
+
+Applying Newton--Raphson,
+\begin{align}
+y_{k+1} &= y_k - \frac{f(y_k)}{f'(y_k)} \\[6pt]
+        &= y_k - \frac{\tfrac{1}{y_k^2} - x}{-\tfrac{2}{y_k^3}} \\[6pt]
+        &= y_k + \frac{y_k}{2}\left(1 - x y_k^2 \right) \\[6pt]
+        &= y_k \left(\tfrac{3}{2} - \tfrac{1}{2} x y_k^2\right).
+\end{align}
+
+Thus one Newton iteration is simply
+\begin{align}
+y \;\gets\; y \left( 1.5 - 0.5 \, x \, y^2 \right).
+\end{align}
+
+
+
 \begin{thebibliography}{00}
 
 \bibitem{grewal2014}
 B. S. Grewal, \textit{Higher Engineering Mathematics}, 43rd ed. New Delhi, India: Khanna Publishers, 2014.
+
+\bibitem{GVVSharma}
+G. V. V. Sharma,C Programming in Middle School
 
 \bibitem{kreyszig2011}
 E. Kreyszig, \textit{Advanced Engineering Mathematics}, 10th ed. Hoboken, NJ, USA: John Wiley \& Sons, 2011.
@@ -705,7 +787,6 @@ National Council of Educational Research and Training (NCERT),
 \textit{Mathematics: Textbook for Class XII}, Part 1 and 2, New Delhi, India: NCERT, 2006.
 
 \end{thebibliography}
-
 
 \end{document}
 

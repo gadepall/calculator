@@ -63,23 +63,9 @@ double sin(double x_target) {
   return y;
 }
 
-double cosine(double x_target) {
-  double x=0, y=1, z=0;
-  double k1,k2,k3,k4,l1,l2,l3,l4;
-  int k=(int)(x_target/PI);
-  double angle=fmod(x_target,2*PI);
+double cos(double x_target) {
 
-  while (x<angle) {
-    if (x+H>angle) H=angle-x;
-    k1=H*z; l1=-H*y;
-    k2=H*(z+l1/2.0); l2=-H*(y+k1/2.0);
-    k3=H*(z+l2/2.0); l3=-H*(y+k2/2.0);
-    k4=H*(z+l3); l4=-H*(y+k3);
-    y+=(k1+2*k2+2*k3+k4)/6.0;
-    z+=(l1+2*l2+2*l3+l4)/6.0;
-    x+=H;
-  }
-  return y;
+  return sin(PI/2 - x_target);
 }
 
 double tan(double x){

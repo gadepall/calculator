@@ -31,14 +31,14 @@
 #define H 0.01
 #define EULER_CONST 2.718281828459045
 uint8_t unmatched_brackets = 0;
-double factorial(double x){
-  double result = 1;
-  while (x > 1){
-    result *= x;
-    x -= 1;
-  }
-  return result;
+
+double factorial(double x) {
+    if (x <= 1) 
+        return 1;
+    else
+        return x * factorial(x - 1);  
 }
+
 
 double fast_inv_sqrt(double x){
     x = (float) x;
@@ -96,6 +96,7 @@ double arcsin(double x) {
 double arccos(double x){
     return ((PI/2) - arcsin(x));
 }
+
 /*
 double normalize_angle(double angle) {
   while (angle >= 2*PI) {
@@ -107,6 +108,7 @@ double normalize_angle(double angle) {
   return angle;
 }
 */
+
 double sin(double x_target) {
   double x, y, z;
   double k1, k2, k3, k4, l1, l2, l3, l4;
