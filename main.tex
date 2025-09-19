@@ -6,7 +6,7 @@
 \usepackage{float}
 \usepackage{booktabs}
 \usepackage{url}
-
+\usepackage{circuitikz}
 \lstset{
   basicstyle=\ttfamily\small,
   keywordstyle=\color{blue}\bfseries,
@@ -393,7 +393,304 @@ codes/
 |-- trig_func.c
 \end{lstlisting}
 
+
 \section{Hardware Implementation}
+
+\subsection{Hardware Required}
+\begin{table}[H]
+\centering
+\caption{Materials required for the scientific calculator}
+\label{tab:materials}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{ll}
+\toprule
+\textbf{Quantity} & \textbf{Component} \\
+\midrule
+25 & Pushbuttons \\
+1  & LCD 16$\times$2 \\
+1  & Arduino Uno \\
+-- & Jumper wires \\
+1  & Potentiometer \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+    \item A button matrix for user input.
+    \item An Arduino Uno microcontroller to process inputs and execute calculations.
+    \item A 16$\times$2 LCD connected to Arduino for displaying results.
+    \item Connections between the button matrix, LCD, and Arduino Uno as shown in Fig.~\ref{fig:circuit_schematic}.
+\end{itemize}
+
+\subsection{Circuit Connections}
+\begin{table}[H]
+\centering
+\caption{Arduino to LCD pin connections}
+\label{tab:arduino-lcd}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{llll}
+\toprule
+\textbf{Arduino Pin} & \textbf{LCD Pin} & \textbf{LCD Label} & \textbf{Description} \\
+\midrule
+GND  & 1  & GND   & Ground \\
+5V   & 2  & Vcc   & Power Supply \\
+GND  & 3  & Vee   & Contrast Control \\
+D2   & 4  & RS    & Register Select \\
+GND  & 5  & R/W   & Read/Write (fixed to Write) \\
+D3   & 6  & EN    & Enable \\
+D4   & 11 & DB4   & Data Bus (4-bit mode) \\
+D5   & 12 & DB5   & Data Bus (4-bit mode) \\
+D6   & 13 & DB6   & Data Bus (4-bit mode) \\
+D7   & 14 & DB7   & Data Bus (4-bit mode) \\
+5V   & 15 & LED+  & Backlight Anode \\
+GND  & 16 & LED-  & Backlight Cathode \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\subsection{Button Matrix}
+The button matrix is a grid of push-buttons arranged in rows and columns. It allows multiple buttons to be connected to the microcontroller using fewer pins.
+
+\textbf{Working Principle:}
+\begin{itemize}
+    \item The Arduino scans the matrix by activating each row (setting it LOW) one at a time while reading the columns.
+    \item When a button is pressed, it completes the circuit between its corresponding row and column.
+    \item By identifying the active row and column, the Arduino determines which button was pressed.
+    \item Example: If the first column is active and a press is detected on the second row, the button pressed is the second button in the first column.
+\end{itemize}
+This reduces the number of pins required to implement a calculator with 25 buttons.
+\begin{table}[h!]\centering
+\caption{Key assignments in Mode 1 with Arduino pin mapping}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{c|c|c|c|c|c}
+\toprule
+      & Col 1 & Col 2 & Col 3 & Col 4 & Col 5 \\
+\midrule
+Row 1 & 0 & 1 & 2 & 3 & 4 \\
+Row 2 & 5 & 6 & 7 & 8 & 9 \\
+Row 3 & + & - & $\times$ & $\div$ & $\sin($ \\
+Row 4 & $\cos($ & $\tan($ & $e^{(}$ & $\ln($ & Clear \\
+Row 5 & Backspace & . & = & Mode shift& $\pi$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h!]\centering
+\caption{Key assignments in Mode 2 with Arduino pin mapping}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{c|c|c|c|c|c}
+\toprule
+      & Col 1 & Col 2 & Col 3 & Col 4 & Col 5 \\
+\midrule
+Row 1  & 0 & 1 & 2 & 3 & 4 \\
+Row 2  & 5 & 6 & 7 & 8 & 9 \\
+Row 3  & ( & ) & $x^{y}$ & $\text{fact}($ & $\arcsin($ \\
+Row 4  & $\arccos($ & $\arctan($ & mod & $\log_{10}($ & Clear \\
+Row 5  & Backspace & . & = & Mode shift& $\pi$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+\begin{table}[H]
+\centering
+\caption{Keypad row/column connections to Arduino pins}
+\label{tab:keypad}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{ll}
+\toprule
+\textbf{Keypad Line} & \textbf{Arduino Pin} \\
+\midrule
+Row 1 & D8 \\
+Row 2 & D9 \\
+Row 3 & D10 \\
+Row 4 & D11 \\
+Row 5 & A3 \\
+Col 1 & D12 \\
+Col 2 & D13 \\
+Col 3 & A0 \\
+Col 4 & A1 \\
+Col 5 & A2 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\begin{figure}[H]
+\centering
+\caption{Button Matrix}
+\resizebox{0.51\textwidth}{!}{%
+\begin{circuitikz}
+\tikzstyle{every node}=[font=\large]
+\draw (4.25,12) to[short] (4.25,6.25);
+\draw (4.25,11.25) to[push button] (6.25,11.25);
+\draw (4.25,10.25) to[push button] (6.25,10.25);
+\draw (4.25,9) to[push button] (6.25,9);
+\draw (4.25,7.75) to[push button] (6.25,7.75);
+\draw (4.25,6.5) to[push button] (6.25,6.5);
+\draw (7,12) to[short] (7,6.25);
+\draw (7,11.25) to[push button] (9,11.25);
+\draw (7,10.25) to[push button] (9,10.25);
+\draw (7,9) to[push button] (9,9);
+\draw (7,7.75) to[push button] (9,7.75);
+\draw (7,6.5) to[push button] (9,6.5);
+\draw (9.75,12) to[short] (9.75,6.25);
+\draw (9.75,11.25) to[push button] (11.75,11.25);
+\draw (9.75,10.25) to[push button] (11.75,10.25);
+\draw (9.75,9) to[push button] (11.75,9);
+\draw (9.75,7.75) to[push button] (11.75,7.75);
+\draw (9.75,6.5) to[push button] (11.75,6.5);
+\draw (12.5,12) to[short] (12.5,6.25);
+\draw (12.5,11.25) to[push button] (14.5,11.25);
+\draw (12.5,10.25) to[push button] (14.5,10.25);
+\draw (12.5,9) to[push button] (14.5,9);
+\draw (12.5,7.75) to[push button] (14.5,7.75);
+\draw (12.5,6.5) to[push button] (14.5,6.5);
+\draw (1.5,12) to[short] (1.5,6.25);
+\draw (1.5,11.25) to[push button] (3.5,11.25);
+\draw (1.5,10.25) to[push button] (3.5,10.25);
+\draw (1.5,9) to[push button] (3.5,9);
+\draw (1.5,7.75) to[push button] (3.5,7.75);
+\draw (1.5,6.5) to[push button] (3.5,6.5);
+\draw (6.25,12.5) to[short] (6.25,6.25);
+\draw (6.25,13.5) to[short] (6.25,11.25);
+\draw (3.5,12.75) to[short] (0.75,12.75);
+\draw (6.25,13.5) to[short] (0.75,13.5);
+\draw (11.75,15) to[short] (0.75,15);
+\draw (0.75,14.25) to[short] (9,14.25);
+\draw (9,14.25) to[short] (9,6.25);
+\draw (14.5,15.75) to[short] (0.75,15.75);
+\draw [ color={rgb,255:red,255; green,56; blue,56}, ](1.5,11.25) to[short] (0.75,11.25);
+\draw [ color={rgb,255:red,240; green,51; blue,51}, ](1.5,10.25) to[short] (0.75,10.25);
+\draw [ color={rgb,255:red,229; green,56; blue,56}, ](1.5,9) to[short] (0.75,9);
+\draw [ color={rgb,255:red,246; green,49; blue,49}, ](1.5,7.75) to[short] (0.75,7.75);
+\draw [ color={rgb,255:red,236; green,50; blue,50}, ](1.5,6.5) to[short] (0.75,6.5);
+\node at (1.5,11.25) [circ] {};
+\node at (1.5,10.25) [circ] {};
+\node at (1.5,9) [circ] {};
+\node at (1.5,7.75) [circ] {};
+\node at (1.5,6.5) [circ] {};
+\node at (3.5,11.25) [circ] {};
+\node at (3.5,10.25) [circ] {};
+\node at (3.5,9) [circ] {};
+\node at (3.5,7.75) [circ] {};
+\node at (3.5,6.5) [circ] {};
+\node at (4.25,11.25) [circ] {};
+\node at (4.25,10.25) [circ] {};
+\node at (4.25,9) [circ] {};
+\node at (4.25,7.75) [circ] {};
+\node at (4.25,6.5) [circ] {};
+\node at (6.25,6.5) [circ] {};
+\node at (6.25,7.75) [circ] {};
+\node at (6.25,9) [circ] {};
+\node at (6.25,10.25) [circ] {};
+\node at (6.25,11.25) [circ] {};
+\node at (7,11.25) [circ] {};
+\node at (7,10.25) [circ] {};
+\node at (7,9) [circ] {};
+\node at (7,7.75) [circ] {};
+\node at (7,6.5) [circ] {};
+\node at (9,11.25) [circ] {};
+\node at (9,10.25) [circ] {};
+\node at (9,9) [circ] {};
+\node at (9,7.75) [circ] {};
+\node at (9,6.5) [circ] {};
+\node at (11.75,11.25) [circ] {};
+\node at (9.75,11.25) [circ] {};
+\node at (9.75,10.25) [circ] {};
+\node at (9.75,9) [circ] {};
+\node at (9.75,7.75) [circ] {};
+\node at (9.75,6.5) [circ] {};
+\node at (11.75,6.5) [circ] {};
+\node at (11.75,7.75) [circ] {};
+\node at (11.75,9) [circ] {};
+\node at (11.75,10.25) [circ] {};
+\node at (12.5,11.25) [circ] {};
+\node at (12.5,10.25) [circ] {};
+\node at (12.5,9) [circ] {};
+\node at (12.5,7.75) [circ] {};
+\node at (12.5,6.5) [circ] {};
+\node at (14.5,6.5) [circ] {};
+\node at (14.5,7.75) [circ] {};
+\node at (14.5,9) [circ] {};
+\node at (14.5,10.25) [circ] {};
+\node at (14.5,11.25) [circ] {};
+\draw [ color={rgb,255:red,255; green,51; blue,51}, ](1.75,11.25) to[short] (1.75,10.75);
+\draw [ color={rgb,255:red,255; green,51; blue,51}, ](1.75,10.75) to[short] (13,10.75);
+\draw [ color={rgb,255:red,221; green,44; blue,44}, ](13,11.25) to[short] (13,10.75);
+\draw [ color={rgb,255:red,255; green,51; blue,51}, ](4.75,10.75) to[short] (4.75,11.25);
+\draw [ color={rgb,255:red,255; green,51; blue,51}, ](7.5,10.75) to[short] (7.5,11.25);
+\draw [ color={rgb,255:red,255; green,51; blue,51}, ](10.25,10.75) to[short] (10.25,11.25);
+\draw [ color={rgb,255:red,255; green,51; blue,51}, ](1.75,10.25) to[short] (1.75,9.5);
+\draw [ color={rgb,255:red,248; green,53; blue,53}, ](1.75,9.5) to[short] (13,9.5);
+\draw [ color={rgb,255:red,255; green,51; blue,51}, ](13,9.5) to[short] (13,10.25);
+\draw [ color={rgb,255:red,245; green,50; blue,50}, ](10.25,10.25) to[short] (10.25,9.5);
+\draw [ color={rgb,255:red,233; green,47; blue,47}, ](7.5,10.25) to[short] (7.5,9.5);
+\draw [ color={rgb,255:red,220; green,46; blue,46}, ](4.75,10.25) to[short] (4.75,9.5);
+\draw [ color={rgb,255:red,251; green,50; blue,50}, ](1.75,9) to[short] (1.75,8.25);
+\draw [ color={rgb,255:red,245; green,50; blue,50}, ](1.75,8.25) to[short] (13,8.25);
+\draw [ color={rgb,255:red,238; green,58; blue,58}, ](13,9) to[short] (13,8.25);
+\draw [ color={rgb,255:red,248; green,53; blue,53}, ](10.25,9) to[short] (10.25,8.25);
+\draw [ color={rgb,255:red,253; green,53; blue,53}, ](7.5,9) to[short] (7.5,8.25);
+\draw [ color={rgb,255:red,230; green,51; blue,51}, ](4.75,9) to[short] (4.75,8.25);
+\draw [ color={rgb,255:red,255; green,51; blue,51}, ](1.75,7.75) to[short] (1.75,7);
+\draw [ color={rgb,255:red,255; green,51; blue,51}, ](1.75,7) to[short] (13,7);
+\draw [ color={rgb,255:red,234; green,57; blue,57}, ](13,7) to[short] (13,7.75);
+\draw [ color={rgb,255:red,227; green,49; blue,49}, ](10.25,7.75) to[short] (10.25,7);
+\draw [ color={rgb,255:red,240; green,56; blue,56}, ](7.5,7.75) to[short] (7.5,7);
+\draw [ color={rgb,255:red,238; green,68; blue,68}, ](4.75,7.75) to[short] (4.75,7);
+\draw [ color={rgb,255:red,255; green,51; blue,51}, ](1.75,6.5) to[short] (1.75,5.75);
+\draw [ color={rgb,255:red,233; green,63; blue,63}, ](1.75,5.75) to[short] (13,5.75);
+\draw [ color={rgb,255:red,229; green,56; blue,56}, ](13,6.5) to[short] (13,5.75);
+\draw [ color={rgb,255:red,225; green,61; blue,61}, ](10.25,6.5) to[short] (10.25,5.75);
+\draw [ color={rgb,255:red,236; green,65; blue,65}, ](7.5,6.5) to[short] (7.5,5.75);
+\draw [ color={rgb,255:red,242; green,54; blue,54}, ](4.75,6.5) to[short] (4.75,5.75);
+\node at (0.75,12.75) [circ] {};
+\node at (0.75,13.5) [circ] {};
+\node at (0.75,14.25) [circ] {};
+\node at (0.75,15) [circ] {};
+\node at (0.75,15.75) [circ] {};
+\node at (0.75,11.25) [squarepole, color={rgb,255:red,236; green,65; blue,65}] {};
+\node at (0.75,10.25) [squarepole, color={rgb,255:red,236; green,65; blue,65}] {};
+\node at (0.75,9) [squarepole, color={rgb,255:red,236; green,65; blue,65}] {};
+\node at (0.75,7.75) [squarepole, color={rgb,255:red,236; green,65; blue,65}] {};
+\node at (0.75,6.5) [squarepole, color={rgb,255:red,236; green,65; blue,65}] {};
+\node [font=\large] at (0,15.75) {$D8$};
+\node [font=\large] at (0,15) {$D9$};
+\node [font=\large] at (0,14.25) {$D10$};
+\node [font=\large] at (0,13.5) {$D11$};
+\node [font=\large] at (0,12.75) {$D12$};
+\node [font=\large] at (0.25,11.25) {$A0$};
+\node [font=\large] at (0.25,10.25) {$A1$};
+\node [font=\large] at (0.25,9) {$A2$};
+\node [font=\large] at (0.25,7.75) {$A3$};
+\node [font=\large] at (0.25,6.5) {$A4$};
+\draw (11.75,15) to[short] (11.75,6.25);
+\draw (14.5,15.75) to[short] (14.5,6.25);
+\draw (3.5,12.75) to[short] (3.5,6.25);
+\end{circuitikz}
+}
+
+\label{fig:my_label}
+\end{figure}
+\subsection{Schematic Circuit}
+The schematic for circuit connections is shown below,
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.5\textwidth]{figs/schematic.png}
+    \caption{Schematic of Circuit.}
+    \label{fig:circuit_schematic}
+\end{figure}
+
+
+\subsection{Hardware Circuit}
+The hardware circuit of calculator,
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.5\textwidth]{figs/circuit.png}
+    \caption{circuit}
+    \label{fig:circuit}
+\end{figure}
+
 
 \begin{thebibliography}{00}
 
@@ -410,6 +707,6 @@ National Council of Educational Research and Training (NCERT),
 \end{thebibliography}
 
 
-
-
 \end{document}
+
+
