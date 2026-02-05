@@ -51,7 +51,7 @@ Scientific Calculator, Microcontroller, Runge--Kutta Method, Quake III Algorithm
 
 \section{Software Implementation}
 
-Instead of using "general expansion methods" (like Taylor/Maclaurin series with many terms), we reformulated each function as a differential equation.
+Instead of using ``general expansion methods" (like Taylor/Maclaurin series with many terms), we reformulated each function as a differential equation.
  The algorithms used to calculate the values are  RK4 (for ODEs), Newton–Raphson (for refinements like inverse sqrt).
 
 \subsection{Supported Functions}
@@ -78,8 +78,8 @@ Input Symbols & Digits $0$–$9$, decimal point, parentheses $(,)$ \\
 
 \subsection{Runge--Kutta Method (RK4)}
 We employ the fourth-order Runge--Kutta (RK4) method \cite{grewal2014,kreyszig2011} 
-to solve ordinary differential equations for trigonometric and exponential functions.
-The full derivation and step-by-step procedure are provided in Appendix~\ref{appendix:rk4}.
+to solve ordinary differential equations for trigonometric and exponential functions. This was chosen over alternative numerical integration techniques, keeping in mind the limited resources in a microcontroller based environment. A detailed analysis is given in Appendix~\ref{appendix:comparison}.
+The full derivation and step-by-step procedure for RK4 are provided in Appendix~\ref{appendix:rk4}.
 
 \subsection{Trigonometric Functions}
 
@@ -374,7 +374,7 @@ Evaluation of RPN uses a stack:
 For the above example, evaluating the postfix expression gives the result $1$ as expected .
 
 \subsection{Complexity and Applications}
-The algorithm runs in $O(n)$ time, where $n$ is the number of tokens, since each token is processed once.  
+The algorithm runs in $O(n)$ time, where $n$ is the number of tokens.  
 Combined with RPN evaluation, it provides an efficient method for handling expressions in calculators, compilers, and symbolic computation systems.
 
 \subsection{Function Handling}
@@ -382,7 +382,7 @@ The Shunting Yard Algorithm can also be used to implement functions such as $\si
 
 \begin{enumerate}
     \item When a function token is encountered, it is pushed onto the operator stack.
-    \item Arguments (possibly separated by commas) are processed as sub-expressions in the usual way.
+    \item Arguments are processed as sub-expressions normally.
     \item When the closing parenthesis ``)'' is reached:
     \begin{itemize}
         \item Operators are popped from the stack to the output queue until the matching ``('' is found.
@@ -400,7 +400,7 @@ As a result, function calls are correctly represented in postfix form. For examp
 The Shunting Yard Algorithm, together with RPN evaluation, ensures efficient parsing and evaluation of mathematical expressions. It respects operator precedence, associativity, and bracket handling, making it a cornerstone in expression processing across computing applications.
 
 \subsection{Code Repository}
-The complete C implementations of the algorithms discussed in this paper are available at: \url{https://github.com/gadepall/calculator/tree/main/codes}
+The complete C implementations of the algorithms discussed in this paper are available at: \url{https://github.com/gadepall/calculator/tree/main/codes}. Instructions for installation of a software based prototype for testing the algorithms are given in Appendix~\ref{appendix:software}.
 
 
 \begin{lstlisting}[caption={Repository Structure in codes/}]
@@ -437,8 +437,8 @@ codes/
 \begin{itemize}
     \item A button matrix for user input.
     \item An Arduino Uno microcontroller to process inputs and execute calculations.
-    \item A 16$\times$2 LCD connected to Arduino for displaying results.
-    \item Connections between the button matrix, LCD, and Arduino Uno as shown in Fig.~\ref{fig:circuit_schematic}.
+    \item A 16$\times$2 LCD connected to Arduino for showing results.
+    \item Connections as shown in Fig.~\ref{fig:circuit_schematic}.
 \end{itemize}
 
 \subsection{Circuit Connections}
@@ -474,9 +474,9 @@ The button matrix is a grid of push-buttons arranged in rows and columns. It all
 \textbf{Working Principle:}
 \begin{itemize}
     \item The Arduino scans the matrix by activating each row (setting it LOW) one at a time while reading the columns.
-    \item When a button is pressed, it completes the circuit between its corresponding row and column.
+    \item When a button is pressed, it completes the circuit.
     \item By identifying the active row and column, the Arduino determines which button was pressed.
-    \item Example: If the first column is active and a press is detected on the second row, the button pressed is the second button in the first column.
+    \item Example: If second row is pressed when first column is active, the first column's second button is pressed.
 \end{itemize}
 This reduces the number of pins required to implement a calculator with 25 buttons.
 \begin{table}[h!]\centering
@@ -703,7 +703,7 @@ The schematic for circuit connections is shown below,
 
 \subsection{Hardware Circuit}
 The hardware circuit of calculator,
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.5\textwidth]{figs/circuit.png}
     \caption{circuit}
@@ -769,6 +769,198 @@ Thus one Newton iteration is simply
 y \;\gets\; y \left( 1.5 - 0.5 \, x \, y^2 \right).
 \end{align}
 
+\section{Comparative Analysis of Numerical Methods}
+\label{appendix:comparison}
+
+Three criteria were considered in the choosing of RK4 as the algorithm for a microcontroller base:
+\begin{itemize}
+  \item Computing complexity
+  \item Accuracy for the chosen precision level
+  \item Memory usage
+\end{itemize}
+
+\subsection{Rejected Alternative Algorithms}
+
+\subsubsection{Euler's Method}
+The Euler method is the simplest numerical solver. The basic idea is to approximate the curve by its tangent line, meaning it is a first order solver.
+\begin{itemize}\item\textbf{Forward Euler (Explicit)}
+The slope at the current point is used as the approximation for the value at the end of the step.
+\begin{align}
+y_{n+1} = y_n + h\cdot f(x_n, y_n)
+\end{align}
+
+\item\textbf{Backward Euler (Implicit)}
+  The slope at the end of the step is used as the approximation. $y_{n+1}$ is present on both sides of the equation, so another algorithm is needed to separate it at each step.
+\begin{align}
+y_{n+1} = y_n + h \cdot f(x_{n+1}, y_{n+1})
+\end{align}
+\begin{itemize}
+  \item \textbf{Drawback:} For a step size of $h$, the error is $O(h)$. Thus to reduce error, we would have to increase step size drastically, leading to lots of computations.
+\end{itemize}
+\end{itemize}
+
+\subsubsection{Trapezoidal Rule}
+This method approximates the integral by dividing the area under the curve into trapezoids instead of rectangles.
+\begin{align}
+y_{n+1} = y_n + \frac{h}{2}\cdot(f(x_n, y_n) + f(x_{n+1}, y_{n+1}))
+\end{align}
+\begin{itemize}
+\begin{itemize}
+\item \textbf{Drawbacks:} It is second order, meaning error of $O(h^2)$. It is also implicit, meaning each step would require another iterative solving mechanism such as Newton-Rhapson.
+\end{itemize}
+\end{itemize}
+
+\subsubsection{Series Expansion Methods}
+Taylor/Maclaurin series can also be used for this purpose.
+\begin{itemize}
+    \begin{itemize}
+    \item \textbf{Drawbacks:} Precision cannot be acheived consistently as the number of terms needed vary with function and also with input value. As the input increases, convergence is slow, and number of terms needed to be stored in memory increases.
+\end{itemize}
+\end{itemize}
+
+
+\subsubsection{Second-Order Runge-Kutta Methods (RK2)}
+A step up in accuracy from Euler's method are the second-order Runge-Kutta (RK2) methods. These methods use a preliminary slope calculation to make a more accurate step.
+\begin{itemize}
+    \item \textbf{Heun's Method:} This method averages the slope at the beginning and end of the interval (using an Euler step as a predictor):
+    \begin{align*}
+        \tilde{y}_{n+1} &= y_n + h \cdot f(x_n, y_n) \\
+        y_{n+1} &= y_n + \tfrac{h}{2}(f(x_n, y_n) + f(x_{n+1}, \tilde{y}_{n+1}))
+    \end{align*}
+    \begin{itemize}
+    \item \textbf{Drawback:} Both methods are second-order, with global error proportional to $h^2$ (denoted $O(h^2)$). While this is a significant improvement over Euler's method, it is still much less accurate than the fourth-order RK4 method ($O(h^4)$). Given that RK4 only requires twice the number of function evaluations per step as these RK2 methods (four vs. two), the substantial gain in accuracy is a highly favorable trade-off for a scientific calculator application.
+\end{itemize}
+\end{itemize}
+
+\subsection{Justification for RK4 Selection}
+
+The fixed-step RK4 method was determined to be the optimal choice for this specific hardware implementation based on the following analysis (summarized in Table \ref{tab:accuracy_results}). The code for this analysis can be found at: \url{https://github.com/gadepall/calculator/tree/main/analysis}:
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\columnwidth]{figs/analysis.png}
+	\caption{Comparison of the accuracy of the algorithms}
+	\label{fig:analysis}
+\end{figure}
+Here, each algorithm was compared against the gold-standard MPFR library up to 50 decimal places. Accuracy is represented using \textbf{Units in Last Place (ULP)} measure.
+\par As per the results in Fig.\ref{fig:analysis}, RK4 demonstrates a clear dominance, with both maximum and average errors being many orders of magnitude less than the other algorithms. The Euler methods demonstrate an increasing drift from the true value with increase in input value, while the trapezoidal method, while stable in its error variation, featured much more absolute error than RK4. As expected, RK2 showed similar error variation as RK4 but much greater in magnitude.
+%\begin{enumerate}
+%    \item \textbf{Resource Constraints:} RK4 is a single-step method that requires storing only the current state $(x_n, y_n)$, making it memory efficient.    \item \textbf{Simplicity and Robustness:} The explicit formulas for RK4 (Appendix \ref{appendix:rk4}) are straightforward to implement in C. For the supported set of smooth functions (Table \ref{tab:supported}) , the $O(h^4)$ global error of RK4 provides sufficient precision for the 16$\times$2 LCD display  without the code complexity of advanced methods.
+%\end{enumerate}
+\begin{table}[H]
+    \centering
+    \caption{Accuracy comparison for $\sin(x)$ generation ($h \approx 0.06$)}
+    \label{tab:accuracy_results}
+    \begin{tabular}{lccc}
+        \toprule
+        \textbf{Algorithm} & \textbf{Max Error (ULP)} & \textbf{RMS Error} & \textbf{Stability} \\
+        \midrule
+        RK4 & $2.38 \times 10^{11}$ & $3.44 \times 10^{-7}$ & High\\
+        Trapezoidal & $6.00 \times 10^{14}$ & $8.77 \times 10^{-4}$ & High\\
+        Heun & $1.20 \times 10^{15}$ & $1.74 \times 10^{-3}$ & Moderate\\
+        Forward Euler & $1.86 \times 10^{15}$ & $8.56 \times 10^{-2}$ & Unstable\\
+        Backward Euler & $2.84 \times 10^{15}$ & $7.27 \times 10^{-2}$ & Unstable\\
+        \bottomrule
+    \end{tabular}
+\end{table}
+%\begin{table}[H]
+%\centering
+%\caption{Comparison of Numerical Methods for Calculator Implementation}
+%\label{tab:method_comparison}
+%\renewcommand{\arraystretch}{1.3}
+%\begin{tabular}{lccc}
+%\toprule
+%\textbf{Method} & \textbf{Memory Usage} & \textbf{Complexity} & \textbf{Accuracy} \\
+%\midrule
+%\textbf{RK4 (Selected)} & \textbf{Low} & \textbf{Low} & \textbf{High} \\
+%  Euler & Low & Low & Very Low \\
+%  Trapezoidal Rule & Low & Low & Low \\
+%  Heun & Low & Low & Low \\
+%\bottomrule
+%\end{tabular}
+%\end{table}
+\section{Software Setup}
+\label{appendix:software}
+\subsection{Termux}
+\begin{enumerate}
+	\item On your android device, follow the instructions in 
+%fdroid apk from
+%
+\begin{lstlisting}
+https://github.com/gadepall/fwc-1
+\end{lstlisting}
+to setup and install Debian on Termux.
+\iffalse
+\item Install Termux from apkpure
+\item Install basic packages on termux 
+\begin{lstlisting}
+#Give termux access to your  user directory in android
+termux-setup-storage
+
+#Upgrade packages
+apt update && apt upgrade
+apt install build-essential openssh
+
+#Mandatory packages
+apt install curl git wget subversion proot proot-distro python  nmap neovim ranger
+#------------------End Install Termux----------------------------
+\end{lstlisting}
+\item Install debian on termux 
+\begin{lstlisting}
+proot-distro install debian
+proot-distro login debian
+\end{lstlisting}
+\fi
+\end{enumerate}
+\subsection{Platformio }
+\begin{enumerate}
+	\item Install Packages
+\begin{lstlisting}
+apt install avra avrdude gcc-avr avr-libc
+\end{lstlisting}
+\item Follow the instructions in 
+  \begin{lstlisting}[breakatwhitespace=false]
+https://docs.platformio.org/en/stable/core/installation/methods/installer-script.html#super-quick-macos-linux
+\end{lstlisting}
+to install platformio.
+\item Execute the following on debian
+\begin{lstlisting}
+cd ide/piosetup/codes
+pio run
+\end{lstlisting}
+See Fig. \ref{fig:arduino} for the Arduino pin diagram.
+		\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.75\columnwidth]{figs/arduino.jpg}
+	\caption{Arduino Pinout}
+	\label{fig:arduino}
+\end{figure}
+
+\end{enumerate}
+\subsection{Arduino Droid}
+\begin{enumerate}
+\item Install ArduinoDroid from apkpure
+\item Open ArduinoDroid and grant all permissions
+\item Connect the Arduino to your phone via USB-OTG
+\item For flashing the bin files, in ArduinoDroid,
+\begin{lstlisting}
+Actions->Upload->Upload Precompiled
+\end{lstlisting}
+then go to your working directory and select
+\begin{lstlisting}
+.pio/build/uno/firmware.hex
+\end{lstlisting}
+for uploading hex file to the Arduino Uno
+\item The LED beside pin 13 will start
+blinking
+\end{enumerate}
+
+\subsection{App Upload}
+\begin{enumerate}
+  \item Download the app APK file and install it from your File Manager.
+    \begin{lstlisting}[breakatwhitespace=false]
+    \end{lstlisting}
+\end{enumerate}
 
 
 \begin{thebibliography}{00}
