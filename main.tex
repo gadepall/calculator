@@ -51,8 +51,8 @@ Scientific Calculator, Microcontroller, Runge--Kutta Method, Quake III Algorithm
 
 \section{Software Implementation}
 
-Instead of using ``general expansion methods" (like Taylor/Maclaurin series with many terms), each function was reforumlated as a differential equation.
- The algorithms used to calculate the values are  RK4 (for ODEs), Newton–Raphson (for refinements like inverse sqrt).
+Instead of using ``general expansion methods" (like Taylor/Maclaurin series with many terms), each function was reformulated as a differential equation.
+ The algorithms used to calculate the values are  RK4 (for ODEs), Newton-–Raphson (for refinements like inverse sqrt).
 
 \subsection{Supported Functions}
 
@@ -77,7 +77,7 @@ Input Symbols & Digits $0$–$9$, decimal point, parentheses $(,)$ \\
 \end{table}
 
 \subsection{Runge--Kutta Method (RK4)}
-The fourth-order Runge--Kutta (RK4) method \cite{grewal2014,kreyszig2011} is employed to solve ordinary differential equations for trigonometric and exponential functions. This was chosen over alternative numerical integration techniques, keeping in mind the limited resources in a microcontroller based environment. A detailed analysis is given in Appendix~\ref{appendix:comparison}.
+The fourth-order Runge--Kutta (RK4) method \cite{grewal2014,kreyszig2011} is employed to solve ordinary differential equations for trigonometric and exponential functions. This was chosen over alternative ODE solvers due to maintainability and accuracy. A detailed analysis of the choice of algorithm is given in Appendix~\ref{appendix:comparison}.
 The full derivation and step-by-step procedure for RK4 are provided in Appendix~\ref{appendix:rk4}.
 
 \subsection{Trigonometric Functions}
@@ -94,7 +94,7 @@ System:
 \frac{dy}{dx}=z, \quad \frac{dz}{dx}=-y, \quad y(0)=0, \; z(0)=1
 \end{align}
 
-The $ k_1,k_2,k_3,k_4 $ corresponds to the RK-4 terms of the equation $ \frac{dy}{dx}=z $ and the $ l_1,l_2,l_3,l_4 $ corresponds to the RK-4 terms of the equation $ \frac{dz}{dx}=-y $
+The $ k_1,k_2,k_3,k_4 $ correspond to the RK-4 terms of the equation $ \frac{dy}{dx}=z $ and the $ l_1,l_2,l_3,l_4 $ corresponds to the RK-4 terms of the equation $ \frac{dz}{dx}=-y $
 
 RK4 step values:
 \begin{align}
@@ -122,7 +122,7 @@ Tangent \cite{ncert12} is implemented as the ratio of sine and cosine:
 
 \subsubsection{Inverse Square Root}
 The fast inverse square root algorithm (Quake III method) is used to efficiently compute $x^{-1/2}$. 
-Detailed derivation and Newton–Raphson refinement are included in Appendix~\ref{appendix:inv_sqrt}.
+Detailed derivation and Newton-–Raphson refinement are included in Appendix~\ref{appendix:inv_sqrt}.
 
 \subsection{Inverse Trigonometric Functions}
 \subsubsection{Arcsine} 
@@ -735,7 +735,7 @@ k_4 &= h\cdot f(x_n + h, y_n + k_3).
 
 \label{appendix:inv_sqrt}
 
-The method obtains an initial approximation by manipulating the IEEE~754 floating-point representation of $x$, then refines it using Newton-Raphson iterations.
+The method obtains an initial approximation by manipulating the IEEE~754 floating-point representation of $x$, then refines it using Newton--Raphson iterations.
 
 \begin{enumerate}
     \item Bit manipulation with a ``magic constant'' ($0x5f3759df$) produces an initial guess $y_0$.
@@ -763,7 +763,7 @@ y_{k+1} &= y_k - \frac{f(y_k)}{f'(y_k)} \\[6pt]
         &= y_k \left(\tfrac{3}{2} - \tfrac{1}{2} x y_k^2\right).
 \end{align}
 
-Thus one Newton iteration is simply
+Thus one Newton--Raphson iteration is simply
 \begin{align}
 y \;\gets\; y \left( 1.5 - 0.5 \, x \, y^2 \right).
 \end{align}
@@ -805,7 +805,7 @@ y_{n+1} = y_n + \frac{h}{2}\cdot(f(x_n, y_n) + f(x_{n+1}, y_{n+1}))
 \end{align}
 \begin{itemize}
 \begin{itemize}
-\item \textbf{Drawbacks:} The error is $O(h^2)$. It is also implicit, meaning each step would require another iterative solving mechanism such as Newton-Rhapson to separate the target variable.
+\item \textbf{Drawbacks:} The error is $O(h^2)$. It is also implicit, meaning each step would require another iterative solving mechanism such as Newton--Rhapson to separate the target variable.
 \end{itemize}
 \end{itemize}
 
@@ -961,7 +961,7 @@ blinking
 \begin{enumerate}
   \item Download the app APK file and install it from your File Manager.
     \begin{lstlisting}[breakatwhitespace=false]
-    \end{lstlisting}
+    https://github.com/gadepall/calculator/raw/refs/heads/changes/software/calci.apk\end{lstlisting}
 \end{enumerate}
 
 
