@@ -30,11 +30,11 @@
 \title{Implementation of Scientific Calculator Functions on Microcontroller using C}
 
 \author{
-\IEEEauthorblockN{Krishna Patil, Nara Prajwal}
+\IEEEauthorblockN{Krishna Patil, Nara Prajwal, Subhodeep Chakraborty, Dr. G.V.V. Sharma}
 \IEEEauthorblockA{
 Department of Electrical Engineering\\
 IIT Hyderabad\\
-Email: ee24btech11036@iith.ac.in, ee24btech11051@iith.ac.in}
+Email: gadepall@ee.iith.ac.in}
 }
 
 \begin{document}
@@ -51,7 +51,7 @@ Scientific Calculator, Microcontroller, Runge--Kutta Method, Quake III Algorithm
 
 \section{Software Implementation}
 
-Instead of using ``general expansion methods" (like Taylor/Maclaurin series with many terms), we reformulated each function as a differential equation.
+Instead of using ``general expansion methods" (like Taylor/Maclaurin series with many terms), each function was reforumlated as a differential equation.
  The algorithms used to calculate the values are  RK4 (for ODEs), Newton–Raphson (for refinements like inverse sqrt).
 
 \subsection{Supported Functions}
@@ -77,8 +77,7 @@ Input Symbols & Digits $0$–$9$, decimal point, parentheses $(,)$ \\
 \end{table}
 
 \subsection{Runge--Kutta Method (RK4)}
-We employ the fourth-order Runge--Kutta (RK4) method \cite{grewal2014,kreyszig2011} 
-to solve ordinary differential equations for trigonometric and exponential functions. This was chosen over alternative numerical integration techniques, keeping in mind the limited resources in a microcontroller based environment. A detailed analysis is given in Appendix~\ref{appendix:comparison}.
+The fourth-order Runge--Kutta (RK4) method \cite{grewal2014,kreyszig2011} is employed to solve ordinary differential equations for trigonometric and exponential functions. This was chosen over alternative numerical integration techniques, keeping in mind the limited resources in a microcontroller based environment. A detailed analysis is given in Appendix~\ref{appendix:comparison}.
 The full derivation and step-by-step procedure for RK4 are provided in Appendix~\ref{appendix:rk4}.
 
 \subsection{Trigonometric Functions}
@@ -134,7 +133,7 @@ ODE:
 \end{align}
 
 \subsubsection{Arccosine}
- Use the identity \cite{ncert12}
+ The identity used is\cite{ncert12}:
 \begin{align}
    \arccos(x) = \frac{\pi}{2} - \arcsin(x) 
 \end{align}
@@ -150,16 +149,16 @@ ODE:
 
 \subsection{Logarithmic Functions}
 
-The natural logarithm can be obtained by solving the differential equation \cite{ncert12}
+The natural logarithm can be obtained by solving the differential equation \cite{ncert12}:
 \begin{align}
 \frac{dy}{dx} = \frac{1}{x}, \quad y(1)=0
 \end{align}
-which has the exact solution $y(x)=\ln(x)$. Using the RK4 method, we can approximate $\ln(x)$ by integrating this ODE from $x=1$ to the target value.
+which has the exact solution $y(x)=\ln(x)$. Using the RK4 method, $\ln(x)$ can be approximated by integrating this ODE from $x=1$ to the target value.
 
 \subsection{Exponential Functions}
 
 \subsubsection{Power Function} 
-The power function $y=x^w$ \cite{ncert12} satisfies
+The power function $y=x^w$ \cite{ncert12} satisfies:
 \begin{align}
 \frac{dy}{dx} = \frac{w}{x}y, \quad y(1)=1
 \end{align}
@@ -168,7 +167,7 @@ The power function $y=x^w$ \cite{ncert12} satisfies
 
 \subsection{Factorial Function}
 
-The algorithm is a simple recursive function in C
+The algorithm is a simple recursive function in C:
 
 \begin{align}
 y_n = n \cdot y_{n-1}
@@ -305,7 +304,7 @@ It relies on two structures:
 \end{algorithm}
 
 \subsection{Operator Precedence}
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{Operator Precedence and Associativity}
 \label{tab:precedence}
@@ -523,12 +522,12 @@ Row 1 & D8 \\
 Row 2 & D9 \\
 Row 3 & D10 \\
 Row 4 & D11 \\
-Row 5 & A3 \\
-Col 1 & D12 \\
-Col 2 & D13 \\
-Col 3 & A0 \\
-Col 4 & A1 \\
-Col 5 & A2 \\
+Row 5 & D12 \\
+Col 1 & A0 \\
+Col 2 & A1 \\
+Col 3 & A2 \\
+Col 4 & A3 \\
+Col 5 & A4 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -691,7 +690,7 @@ Col 5 & A2 \\
 
 \label{fig:my_label}
 \end{figure}
-\subsection{Schematic Circuit}
+\subsection{Circuit Schematic}
 The schematic for circuit connections is shown below,
 \begin{figure}[htbp]
     \centering
@@ -701,14 +700,14 @@ The schematic for circuit connections is shown below,
 \end{figure}
 
 
-\subsection{Hardware Circuit}
-The hardware circuit of calculator,
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.5\textwidth]{figs/circuit.png}
-    \caption{circuit}
-    \label{fig:circuit}
-\end{figure}
+%\subsection{Hardware Circuit}
+%The hardware circuit of calculator,
+%\begin{figure}[H]
+%    \centering
+%    \includegraphics[width=0.5\textwidth]{figs/circuit.png}
+%    \caption{circuit}
+%    \label{fig:circuit}
+%\end{figure}
 
 
 \appendices
@@ -726,10 +725,10 @@ y_{n+1} = y_n + \frac{1}{6}(k_1 + 2 k_2 + 2 k_3 + k_4)
 \end{align}
 where
 \begin{align}
-k_1 &= h f(x_n, y_n), \\
-k_2 &= h f(x_n + h/2, y_n + k_1/2), \\
-k_3 &= h f(x_n + h/2, y_n + k_2/2), \\
-k_4 &= h f(x_n + h, y_n + k_3).
+k_1 &= h\cdot f(x_n, y_n), \\
+k_2 &= h\cdot f(x_n + h/2, y_n + k_1/2), \\
+k_3 &= h\cdot f(x_n + h/2, y_n + k_2/2), \\
+k_4 &= h\cdot f(x_n + h, y_n + k_3).
 \end{align}
 
 \subsubsection*{Quake III Algorithm}
@@ -795,18 +794,18 @@ y_{n+1} = y_n + h\cdot f(x_n, y_n)
 y_{n+1} = y_n + h \cdot f(x_{n+1}, y_{n+1})
 \end{align}
 \begin{itemize}
-  \item \textbf{Drawback:} For a step size of $h$, the error is $O(h)$. Thus to reduce error, we would have to increase step size drastically, leading to lots of computations.
+  \item \textbf{Drawback:} For a step size of $h$, the error is $O(h)$. Thus to reduce error, the step size would have to be increased drastically, which is computationally prohibitive.
 \end{itemize}
 \end{itemize}
 
 \subsubsection{Trapezoidal Rule}
-This method approximates the integral by dividing the area under the curve into trapezoids instead of rectangles.
+This is a second-order method approximates the integral by dividing the area under the curve into trapezoids instead of rectangles.
 \begin{align}
 y_{n+1} = y_n + \frac{h}{2}\cdot(f(x_n, y_n) + f(x_{n+1}, y_{n+1}))
 \end{align}
 \begin{itemize}
 \begin{itemize}
-\item \textbf{Drawbacks:} It is second order, meaning error of $O(h^2)$. It is also implicit, meaning each step would require another iterative solving mechanism such as Newton-Rhapson.
+\item \textbf{Drawbacks:} The error is $O(h^2)$. It is also implicit, meaning each step would require another iterative solving mechanism such as Newton-Rhapson to separate the target variable.
 \end{itemize}
 \end{itemize}
 
@@ -828,7 +827,7 @@ A step up in accuracy from Euler's method are the second-order Runge-Kutta (RK2)
         y_{n+1} &= y_n + \tfrac{h}{2}(f(x_n, y_n) + f(x_{n+1}, \tilde{y}_{n+1}))
     \end{align*}
     \begin{itemize}
-    \item \textbf{Drawback:} Both methods are second-order, with global error proportional to $h^2$ (denoted $O(h^2)$). While this is a significant improvement over Euler's method, it is still much less accurate than the fourth-order RK4 method ($O(h^4)$). Given that RK4 only requires twice the number of function evaluations per step as these RK2 methods (four vs. two), the substantial gain in accuracy is a highly favorable trade-off for a scientific calculator application.
+      \item \textbf{Drawback:} The global error is $O(h^2)$. While this is a significant improvement over Euler's method, it is still much less accurate than the fourth-order RK4 method ($O(h^4)$). Given that RK4 only requires twice the number of function evaluations per step as these RK2 methods (four vs. two), the substantial gain in accuracy was judged as a highly favourable trade-off, as shown in Fig.\ref{fig:analysis}.
 \end{itemize}
 \end{itemize}
 
@@ -843,6 +842,9 @@ The fixed-step RK4 method was determined to be the optimal choice for this speci
 	\label{fig:analysis}
 \end{figure}
 Here, each algorithm was compared against the gold-standard MPFR library up to 50 decimal places. Accuracy is represented using \textbf{Units in Last Place (ULP)} measure.
+\begin{equation}
+  \text{Error}_\text{ULP} = \frac{|y_\text{calc}-y_\text{true}|}{\epsilon\left(y_\text{true}\right)}
+\end{equation}
 \par As per the results in Fig.\ref{fig:analysis}, RK4 demonstrates a clear dominance, with both maximum and average errors being many orders of magnitude less than the other algorithms. The Euler methods demonstrate an increasing drift from the true value with increase in input value, while the trapezoidal method, while stable in its error variation, featured much more absolute error than RK4. As expected, RK2 showed similar error variation as RK4 but much greater in magnitude.
 %\begin{enumerate}
 %    \item \textbf{Resource Constraints:} RK4 is a single-step method that requires storing only the current state $(x_n, y_n)$, making it memory efficient.    \item \textbf{Simplicity and Robustness:} The explicit formulas for RK4 (Appendix \ref{appendix:rk4}) are straightforward to implement in C. For the supported set of smooth functions (Table \ref{tab:supported}) , the $O(h^4)$ global error of RK4 provides sufficient precision for the 16$\times$2 LCD display  without the code complexity of advanced methods.
