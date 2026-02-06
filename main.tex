@@ -27,30 +27,31 @@
   keepspaces=true                   % preserve spacing properly
 }
 
-\title{Implementation of Scientific Calculator Functions on Microcontroller using C}
+\title{Scientific Computing on Hardware}
 
 \author{
-\IEEEauthorblockN{Krishna Patil, Nara Prajwal, Subhodeep Chakraborty, Dr. G.V.V. Sharma}
+\IEEEauthorblockN{Subhodeep Chakraborty, Krishna Patil, Nara Prajwal  and  G.V.V. Sharma}
 \IEEEauthorblockA{
 Department of Electrical Engineering\\
 IIT Hyderabad\\
 Email: gadepall@ee.iith.ac.in}
 }
-
 \begin{document}
 
 \maketitle
 
 \begin{abstract}
-This paper presents the implementation of scientific calculator functions such as trigonometric, logarithmic, exponential, power, factorial, and expression parsing using the C programming language on a microcontroller platform. Various numerical algorithms such as Runge--Kutta (RK4), series expansions, iterative methods, and parsing algorithms have been employed. Each function is discussed with its algorithmic basis followed by its C implementation.
+In this paper, various algebraic and transcendental functions are implemented on microcontroller hardware.  This is done by first modeling most functions using high school level differential equations, converting them to difference equations using elementary numerical techniques and then porting these  algorithms to an ATMEGA328P microcontroller using AVR-GCC. In the process, we compare different numerical methods and finalize the Runge-Kutta (RK4) method for hardware implementation, based on numerical accuracy.  We demonstrate the practical utility of this approach by building a scientific calculator based on the RK4 algorithm. 
+
 \end{abstract}
 
 \begin{IEEEkeywords}
-Scientific Calculator, Microcontroller, Runge--Kutta Method, Quake III Algorithm, Shunting Yard Algorithm, C Programming
+Scientific Calculator, Microcontroller, Runge-Kutta Method, Quake III Algorithm, Shunting Yard Algorithm, Embedded C. 
 \end{IEEEkeywords}
 
 \section{Software Implementation}
 
+scientific calculator functions such as trigonometric, logarithmic, exponential, power, factorial, and expression parsing using the C programming language on a microcontroller platform. Various numerical algorithms such as Runge--Kutta (RK4), series expansions, iterative methods, and parsing algorithms have been employed. Each function is discussed with its algorithmic basis followed by its C implementation.
 Instead of using ``general expansion methods" (like Taylor/Maclaurin series with many terms), each function was reformulated as a differential equation.
  The algorithms used to calculate the values are  RK4 (for ODEs), Newton-–Raphson (for refinements like inverse sqrt).
 
