@@ -793,7 +793,7 @@ y_{n+1} = y_n + h\cdot f(x_n, y_n)
 \begin{align}
 y_{n+1} = y_n + h \cdot f(x_{n+1}, y_{n+1})
 \end{align}
-\begin{itemize}
+\item \begin{itemize}
   \item \textbf{Drawback:} For a step size of $h$, the error is $O(h)$. Thus to reduce error, the step size would have to be increased drastically, which is computationally prohibitive.
 \end{itemize}
 \end{itemize}
@@ -804,15 +804,41 @@ This is a second-order method approximates the integral by dividing the area und
 y_{n+1} = y_n + \frac{h}{2}\cdot(f(x_n, y_n) + f(x_{n+1}, y_{n+1}))
 \end{align}
 \begin{itemize}
-\begin{itemize}
+  \item \begin{itemize}
 \item \textbf{Drawbacks:} The error is $O(h^2)$. It is also implicit, meaning each step would require another iterative solving mechanism such as Newton--Rhapson to separate the target variable.
 \end{itemize}
 \end{itemize}
 
+\subsubsection*{Aside: Signal Processing Perspective}
+Another way to approach the previous formula is tranforming it through the $s$-domain and $z$-domain in succession, this reduces the work in solving of ODEs to simple algebraic manipulations. As an example, presented here is the solution to the \textit{sin} function, whose ODE is:
+\begin{equation}
+  y'' + y = 0
+\end{equation}
+
+1. \textbf{Laplace Transform:} Take the Laplace transform of the ODE (assuming zero initial conditions for the transfer function derivation):
+   $$ s^2 Y(s) + Y(s) = 1 \implies Y(s) = H(s) = \frac{1}{s^2+1}$$
+
+2. \textbf{Bilinear Substitution:} Apply the Bilinear transform substitution $s \approx \frac{2}{h} \frac{1 - z^{-1}}{1 + z^{-1}}$, where $h$ is the step:
+   $$  H(z) = \frac{1}{\left[ \left( \frac{2}{h} \frac{1 - z^{-1}}{1 + z^{-1}} \right)^2 + 1 \right]} $$
+
+3. \textbf{Algebraic Simplification:} Let $c = 2/h$, $A = c^2+1$. Simplify and group by powers of $z$
+\begin{align}
+  H(z) &= \frac{(1 + z^{-1})^2}{c^2(1 - z^{-1})^2 + (1 + z^{-1})^2} \\
+  H(z) &= \frac{1 + 2z^{-1} + z^{-2}}{c^2(1 - 2z^{-1} + z^{-2}) + (1 + 2z^{-1} + z^{-2})} \\
+  \frac{Y(z)}{X(z)} &= \frac{1 + 2z^{-1} + z^{-2}}{(c^2 + 1) + (2 - 2c^2)z^{-1} + (c^2 + 1)z^{-2}} \\
+  Y(z)& \cdot \left[ 1 + \frac{2 - 2c^2}{A}z^{-1} + z^{-2} \right]\\  &= X(z) \cdot \frac{1}{A} \left[ 1 + 2z^{-1} + z^{-2} \right]
+  \end{align}
+
+5. \textbf{Difference Equation:} Converting from $z$-domain to discrete time $n$ (where $z^{-k} Y(z) \rightarrow y_{n-k}$):
+\begin{align} y[n] &= \underbrace{\frac{1}{A}(x[n] + 2x[n-1] + x[n-2])}_{\text{Input Terms (Source of Energy)}} \\&- \underbrace{\frac{2 - 2c^2}{A}y[n-1] - y[n-2]}_{\text{Feedback Terms (Oscillation)}} \end{align}
+   
+   Solving for the current term $y_n$ after the impulse has passed:
+   $$ y_n = \frac{8 - 2h^2}{4 + h^2} y_{n-1} - y_{n-2} $$
+
 \subsubsection{Series Expansion Methods}
 Taylor/Maclaurin series can also be used for this purpose.
 \begin{itemize}
-    \begin{itemize}
+  \item \begin{itemize}
     \item \textbf{Drawbacks:} Precision cannot be acheived consistently as the number of terms needed vary with function and also with input value. As the input increases, convergence is slow, and number of terms needed to be stored in memory increases.
 \end{itemize}
 \end{itemize}
@@ -881,6 +907,8 @@ Here, each algorithm was compared against the gold-standard MPFR library up to 5
 %\bottomrule
 %\end{tabular}
 %\end{table}
+
+
 \section{Software Setup}
 \label{appendix:software}
 \subsection{Termux}
