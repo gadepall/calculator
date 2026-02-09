@@ -51,19 +51,19 @@ Scientific Calculator, Microcontroller, Runge-Kutta Method, Quake III Algorithm,
 \end{IEEEkeywords}
 
 \section{Introduction}
-Microcontrollers often find application as the bridge between physical systems and discrete digital logic. This can be as control systems for robotic applications or state estimation for autonomous navigation, among many other applications. Thus, digitally realising continuous-time dynamic systems is an important task in embedded systems engineering. One important aspect of digitising physical systems is the solving of differential equations describing the state. This requires the design and implementation of algorithms capable of approximating complex functions under tight resource constraints. With respect to the ubiquity of differential equations as descriptors of real--world systems, the algorithms under the lens are those that perform or approximate numerical integration.
+Microcontrollers often find application as the bridge between physical systems and discrete digital logic. This can be as control systems for robotic applications or state estimation for autonomous navigation, among many other applications.\cite{AkpunarBozkurt2026} Thus, digitally realising continuous-time dynamic systems is an important task in embedded systems engineering. One important aspect of digitising physical systems is the solving of differential equations describing the state. This requires the design and implementation of algorithms capable of approximating complex functions under tight resource constraints. With respect to the ubiquity of differential equations as descriptors of real--world systems, the algorithms under the lens are those that perform or approximate numerical integration.\cite{Udoh2025}
 
-To evaluate the superiority of any numerical method, one must first consider the fundamental challenge of the Initial Value Problem (IVP). Physical systems are typically modeled as a system of ordinary differential equations (ODEs) where the rate of change of a state variable y is a function of time t and the state itself: $\frac{dy}{dt} = f(t,y)$, given an initial condition $y(t_0) = y_0$. The numerical solution involves advancing the state from a known time $t_n$ to a future time $t_{n+1}$ separated by a step size h. The accuracy of this transition is mathematically governed by the Taylor series expansion. Numerical methods differ in how many terms of the expansion of the true solution $y(t+h)$ they capture.
+To evaluate the superiority of any numerical method, one must first consider the fundamental challenge of the Initial Value Problem (IVP). Physical systems are typically modeled as a system of ordinary differential equations (ODEs) where the rate of change of a state variable y is a function of time t and the state itself: $\frac{dy}{dt} = f(t,y)$, given an initial condition $y(t_0) = y_0$. The numerical solution involves advancing the state from a known time $t_n$ to a future time $t_{n+1}$ separated by a step size h. The accuracy of this transition is mathematically governed by the Taylor series expansion. Numerical methods differ in how many terms of the expansion of the true solution $y(t+h)$ they capture.\cite{Udoh2025}
 
-Numerical methods for function approximation on hardware often prioritize either simplicity or specialized efficiency. Euler’s method is the simplest to program, yet its first-order accuracy ($O(h)$) leads to significant numerical drift and instability unless excessively small step sizes are used. Second-order Runge-Kutta (RK2) methods like Heun’s improve precision but still feature much greater absolute error magnitudes than RK4.
+Numerical methods for function approximation on hardware often prioritize either simplicity or specialized efficiency. Euler’s method is the simplest to program, yet its first-order accuracy ($O(h)$) leads to significant numerical drift and instability unless excessively small step sizes are used. Second-order Runge-Kutta (RK2) methods like Heun’s improve precision but still feature much greater absolute error magnitudes than RK4.[Appendix~\ref{appendix:comparison}]
 
-Alternative approximation strategies such as Taylor series or Maclaurin expansions are geometrically intuitive but often impractical for embedded systems. This is because these methods require either the tedious recursive calculation of high-order derivatives, which are computationally expensive to evaluate, or for the coefficients for each function to be pre-stored, which results in memory usage piling up quickly for acceptable accuracy. Also, the number of terms, and thus calculations needed for convergence, are much higher for Taylor series as compared to RK4 for the same accuracy. In contrast, the RK4 framework achieves high-order accuracy without needing derivatives, instead evaluating the function at four strategically chosen intermediate points. This allows for a more robust and maintainable implementation when derivatives are complex or unavailable.
+Alternative approximation strategies such as Taylor series or Maclaurin expansions are geometrically intuitive but often impractical for embedded systems.\cite{gadisa2017} This is because these methods require either the tedious recursive calculation of high-order derivatives, which are computationally expensive to evaluate, or for the coefficients for each function to be pre-stored, which results in memory usage piling up quickly for acceptable accuracy.\cite{parker2021} Also, the number of terms, and thus calculations needed for convergence, are much higher for Taylor series as compared to RK4 for the same accuracy.\cite{Noar2024} In contrast, the RK4 framework achieves high-order accuracy without needing derivatives, instead evaluating the function at four strategically chosen intermediate points. This allows for a more robust and maintainable implementation when derivatives are complex or unavailable.\cite{Murugesan2002}
 
-For specific transcendental functions, the CORDIC algorithm is highly efficient as it uses simple shift-and-add operations instead of multiplications. However, CORDIC is limited by specific convergence ranges and requires different recursive sequences for different classes of functions. Furthermore, linear multistep methods like Adams-Bashforth can reduce function evaluations but are not self-starting and necessitate a queue of past history to be stored that increases memory usage. The single-step nature of RK4 is more suitable for limited microcontrollers as it avoids the RAM overhead of managing past solution data.
+For specific transcendental functions, the CORDIC algorithm is highly efficient as it uses simple shift-and-add operations instead of multiplications.\cite{Eklund2001} However, CORDIC is limited by specific convergence ranges and requires different recursive sequences for different classes of functions.\cite{st_cordic_an5325} Furthermore, linear multistep methods like Adams-Bashforth can reduce function evaluations but are not self-starting and necessitate a queue of past history to be stored that increases memory usage.\cite{Gupta1985} The single-step nature of RK4 is more suitable for limited microcontrollers as it avoids the RAM overhead of managing past solution data.
 
-More advanced structural equations and orthogonal collocation methods offer high spectral resolution but frequently involve complex matrix kernels or iterative non-linear solvers. Similarly, adaptive methods like ode45 provide excellent error control but introduce variable execution times that can cause unacceptable jitter in real-time environments. A fixed-step RK4 approach is superior for deterministic microcontroller performance under the constraints discussed in this work, ensuring that calculations complete predictably within strict sampling windows. 
+More advanced structural equations and orthogonal collocation methods offer low levels of error but frequently involve complex and heavy computations or iterative non-linear solvers.\cite{allamaa2023} Similarly, adaptive methods like ode45 (used in MATLAB) provide excellent accuracy but introduce variable execution times that can cause unacceptable jitter in real-time environments, such as the those mentioned above.\cite{AkpunarBozkurt2026} A fixed-step RK4 approach is superior for predictable performance under the constraints discussed in this work, ensuring that calculations complete reliably within strict sampling windows, such as those in robotics or flight controllers.\cite{Murugesan2002}
 
-Despite extensive research into specialized hardware like FPGAs or complex applications such as motor control, there is a lack of a mathematically unified framework for general scientific computing on 8-bit platforms. Most related works treat different transcendental functions as separate implementation problems rather than a single unified mathematical structure. This work bridges that gap by reformulating diverse scientific functions into high school-level ODEs, providing a robust, high-precision, and conceptually accessible framework for relatively limited microcontrollers like the ATMEGA328P.
+Despite extensive research into specialized hardware like FPGAs or complex applications such as GPS orbit computation and motor control, there is a lack of a mathematically unified framework for general scientific computing on 8-bit platforms.\cite{DeMicco2011, Medjahed2024, AkpunarBozkurt2026} Most related works treat different transcendental functions as separate implementation problems rather than a single unified mathematical structure.\cite{Moroz2023} This work bridges that gap by reformulating diverse scientific functions into high school-level ODEs, providing a robust, high-precision, and conceptually accessible framework for relatively limited microcontrollers like the ATMEGA328P.
 
 \section{Software Implementation}
 
@@ -94,13 +94,13 @@ Input Symbols & Digits $0$–$9$, decimal point, parentheses $(,)$ \\
 \end{table}
 
 \subsection{Runge--Kutta Method (RK4)}
-The fourth-order Runge--Kutta (RK4) method \cite{grewal2014,kreyszig2011} is employed to solve ordinary differential equations for trigonometric and exponential functions. This was chosen over alternative ODE solvers due to maintainability and accuracy. A detailed analysis of the choice of algorithm is given in Appendix~\ref{appendix:comparison}.
+The fourth-order Runge--Kutta (RK4) method is employed to solve ordinary differential equations for trigonometric and exponential functions.\cite{grewal2014,kreyszig2011} This was chosen over alternative ODE solvers due to maintainability and accuracy. A detailed analysis of the choice of algorithm is given in Appendix~\ref{appendix:comparison}.
 The full derivation and step-by-step procedure for RK4 are provided in Appendix~\ref{appendix:rk4}.
 
 \subsection{Trigonometric Functions}
 
 \subsubsection{Sine Function} 
-The sine function \cite{ncert12} is computed by solving the second-order differential equation:
+The sine function is computed by solving the second-order differential equation: \cite{ncert12}
 \begin{align}
 \frac{d^2y}{dx^2} + y = 0, \quad y(0)=0, \quad y'(0)=1
 \end{align}
@@ -128,12 +128,12 @@ z_{n+1} &= z_n+\tfrac{1}{6}(l_1+2l_2+2l_3+l_4).
 \end{align}
 
 \subsubsection{Cosine Function} 
-The cosine function \cite{ncert12} is computed by $\sin(\frac{\pi}{2} - x)$ .
+The cosine function is computed by $\sin(\frac{\pi}{2} - x)$.\cite{ncert12}
 
 
 
 \subsubsection{Tangent Function} 
-Tangent \cite{ncert12} is implemented as the ratio of sine and cosine:
+Tangent is implemented as the ratio of sine and cosine.\cite{ncert12}
 
 \subsection{Inverse Square Root}
 
@@ -143,21 +143,21 @@ Detailed derivation and Newton-–Raphson refinement are included in Appendix~\r
 
 \subsection{Inverse Trigonometric Functions}
 \subsubsection{Arcsine} 
-The ODE for the arcsine function \cite{ncert12} is
-ODE:
+The ODE for the arcsine function is
+ODE: \cite{ncert12}
 \begin{align}
 \frac{dy}{dx} = \frac{1}{\sqrt{1-x^2}}, \quad y(0)=0
 \end{align}
 
 \subsubsection{Arccosine}
- The identity used is\cite{ncert12}:
+ The identity used is: \cite{ncert12}
 \begin{align}
    \arccos(x) = \frac{\pi}{2} - \arcsin(x) 
 \end{align}
 
 \subsubsection{Arctangent}
-The ODE for the arctan function \cite{ncert12} is
-ODE:
+The ODE for the arctan function is
+ODE: \cite{ncert12}
 \begin{align}
 \frac{dy}{dx} = \frac{1}{1+x^2}, \quad y(0)=0
 \end{align}
@@ -166,7 +166,7 @@ ODE:
 
 \subsection{Logarithmic Functions}
 
-The natural logarithm can be obtained by solving the differential equation \cite{ncert12}:
+The natural logarithm can be obtained by solving the differential equation: \cite{ncert12}
 \begin{align}
 \frac{dy}{dx} = \frac{1}{x}, \quad y(1)=0
 \end{align}
@@ -175,7 +175,7 @@ which has the exact solution $y(x)=\ln(x)$. Using the RK4 method, $\ln(x)$ can b
 \subsection{Exponential Functions}
 
 \subsubsection{Power Function} 
-The power function $y=x^w$ \cite{ncert12} satisfies:
+The power function $y=x^w$ satisfies: \cite{ncert12} 
 \begin{align}
 \frac{dy}{dx} = \frac{w}{x}y, \quad y(1)=1
 \end{align}
@@ -994,26 +994,19 @@ blinking
 
 \subsection{App Upload}
 \begin{enumerate}
-  \item Download the app APK file from \url{https://github.com/gadepall/calculator/raw/refs/heads/changes/software/calci.apk} and install it from your File Manager
+  \item Download the files present in \url{https://github.com/gadepall/calculator/tree/main/software}.
+  \item Compile the C files:
+    \begin{lstlisting}
+gcc -shared -o libcalc.so -fPIC func.c pars.c\end{lstlisting}
+  \item Copy the app APK file \verb|calci.apk| to the phone Internal Storage and install it from the File Manager.
+  \item Run the server in \verb|proot-distro|:
+    \begin{lstlisting}
+python3 server.py\end{lstlisting}
+  \item The app now functions as a scientific calculator.
 \end{enumerate}
 
-
-\begin{thebibliography}{00}
-
-\bibitem{grewal2014}
-B. S. Grewal, \textit{Higher Engineering Mathematics}, 43rd ed. New Delhi, India: Khanna Publishers, 2014.
-
-\bibitem{GVVSharma}
-G. V. V. Sharma,C Programming in Middle School
-
-\bibitem{kreyszig2011}
-E. Kreyszig, \textit{Advanced Engineering Mathematics}, 10th ed. Hoboken, NJ, USA: John Wiley \& Sons, 2011.
-
-\bibitem{ncert12}
-National Council of Educational Research and Training (NCERT), 
-\textit{Mathematics: Textbook for Class XII}, Part 1 and 2, New Delhi, India: NCERT, 2006.
-
-\end{thebibliography}
+\bibliographystyle{IEEEtran}
+\bibliography{references}
 
 \end{document}
 
