@@ -1,0 +1,46 @@
+### --- LaTeX --- ###
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.synctex.gz
+*.toc
+
+*.bbl
+*.blg
+*.ind
+*.idx
+*.ilg
+
+### --- Python --- ###
+__pycache__/
+*.py[cod]
+*$py.class
+
+.venv/
+venv/
+env/
+.env
+
+dist/
+build/
+*.egg-info/
+
+### --- C / C++ --- ###
+*.o
+*.obj
+
+*.gch
+*.pch
+
+*.lib
+*.a
+*.la
+*.lo
+
+*.exe
+*.out
+
+### --- OS Specific --- ###
+.DS_Store
+Thumbs.db
