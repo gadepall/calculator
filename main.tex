@@ -9,6 +9,7 @@
 \usepackage{booktabs}
 \usepackage{url}
 \usepackage{circuitikz}
+\usepackage{hyperref}
 \lstset{
   basicstyle=\ttfamily\small,
   keywordstyle=\color{blue}\bfseries,
@@ -49,9 +50,24 @@ In this paper, various algebraic and transcendental functions are implemented on
 Scientific Calculator, Microcontroller, Runge-Kutta Method, Quake III Algorithm, Shunting Yard Algorithm, Embedded C. 
 \end{IEEEkeywords}
 
+\section{Introduction}
+Microcontrollers often find application as the bridge between physical systems and discrete digital logic. This can be as control systems for robotic applications or state estimation for autonomous navigation, among many other applications. Thus, digitally realising continuous-time dynamic systems is an important task in embedded systems engineering. One important aspect of digitising physical systems is the solving of differential equations describing the state. This requires the design and implementation of algorithms capable of approximating complex functions under tight resource constraints. With respect to the ubiquity of differential equations as descriptors of real--world systems, the algorithms under the lens are those that perform or approximate numerical integration.
+
+To evaluate the superiority of any numerical method, one must first consider the fundamental challenge of the Initial Value Problem (IVP). Physical systems are typically modeled as a system of ordinary differential equations (ODEs) where the rate of change of a state variable y is a function of time t and the state itself: $\frac{dy}{dt} = f(t,y)$, given an initial condition $y(t_0) = y_0$. The numerical solution involves advancing the state from a known time $t_n$ to a future time $t_{n+1}$ separated by a step size h. The accuracy of this transition is mathematically governed by the Taylor series expansion. Numerical methods differ in how many terms of the expansion of the true solution $y(t+h)$ they capture.
+
+Numerical methods for function approximation on hardware often prioritize either simplicity or specialized efficiency. Euler’s method is the simplest to program, yet its first-order accuracy ($O(h)$) leads to significant numerical drift and instability unless excessively small step sizes are used. Second-order Runge-Kutta (RK2) methods like Heun’s improve precision but still feature much greater absolute error magnitudes than RK4.
+
+Alternative approximation strategies such as Taylor series or Maclaurin expansions are geometrically intuitive but often impractical for embedded systems. These methods require either the tedious symbolic or recursive calculation of high-order derivatives, which are computationally expensive to evaluate, or for the coefficients  In contrast, the RK4 framework achieves high-order accuracy without needing derivatives, instead evaluating the function at four strategically chosen intermediate points. This allows for a more robust and maintainable implementation when derivatives are complex or unavailable.
+
+For specific transcendental functions, the CORDIC algorithm is highly efficient as it uses simple shift-and-add operations instead of multiplications. However, CORDIC is limited by specific convergence ranges and requires different recursive sequences for different classes of functions. Furthermore, linear multistep methods like Adams-Bashforth can reduce function evaluations but are not self-starting and necessitate a "history queue" that increases memory usage. The single-step nature of RK4 is more suitable for limited microcontrollers as it avoids the RAM overhead of managing past solution data.
+
+More advanced structural equations and orthogonal collocation methods offer high spectral resolution but frequently involve complex matrix kernels or iterative non-linear solvers. Similarly, adaptive methods like ode45 provide excellent error control but introduce variable execution times that can cause unacceptable jitter in real-time environments. A fixed-step RK4 approach is superior for deterministic microcontroller performance, ensuring that calculations complete predictably within strict sampling windows. 
+
+Despite extensive research into specialized hardware like FPGAs or complex applications such as GPS orbit computation and motor control, there is a lack of a mathematically unified framework for general scientific computing on 8-bit platforms. Most related works treat different transcendental functions as separate implementation problems rather than a single unified mathematical structure. This work bridges that gap by reformulating diverse scientific functions into high school-level ODEs, providing a robust, high-precision, and conceptually accessible framework for relatively limited microcontrollers like the ATMEGA328P.
+
 \section{Software Implementation}
 
-scientific calculator functions such as trigonometric, logarithmic, exponential, power, factorial, and expression parsing using the C programming language on a microcontroller platform. Various numerical algorithms such as Runge--Kutta (RK4), series expansions, iterative methods, and parsing algorithms have been employed. Each function is discussed with its algorithmic basis followed by its C implementation.
+This paper presents the implementation of scientific calculator functions such as trigonometric, logarithmic, exponential, power, factorial, and expression parsing using the C programming language on a microcontroller platform. Various numerical algorithms such as Runge--Kutta (RK4), series expansions, iterative methods, and parsing algorithms have been employed. Each function is discussed with its algorithmic basis followed by its C implementation.
 Instead of using ``general expansion methods" (like Taylor/Maclaurin series with many terms), each function was reformulated as a differential equation.
  The algorithms used to calculate the values are  RK4 (for ODEs), Newton-–Raphson (for refinements like inverse sqrt).
 
@@ -914,13 +930,7 @@ Here, each algorithm was compared against the gold-standard MPFR library up to 5
 \label{appendix:software}
 \subsection{Termux}
 \begin{enumerate}
-	\item On your android device, follow the instructions in 
-%fdroid apk from
-%
-\begin{lstlisting}
-https://github.com/gadepall/fwc-1
-\end{lstlisting}
-to setup and install Debian on Termux.
+	\item On your android device, follow the instructions in \url{https://github.com/gadepall/fwc-1} to setup and install Debian on Termux.
 \iffalse
 \item Install Termux from apkpure
 \item Install basic packages on termux 
@@ -949,11 +959,7 @@ proot-distro login debian
 \begin{lstlisting}
 apt install avra avrdude gcc-avr avr-libc
 \end{lstlisting}
-\item Follow the instructions in 
-  \begin{lstlisting}[breakatwhitespace=false]
-https://docs.platformio.org/en/stable/core/installation/methods/installer-script.html#super-quick-macos-linux
-\end{lstlisting}
-to install platformio.
+\item Follow the instructions in \url{https://docs.platformio.org/en/stable/core/installation/methods/installer-script.html#super-quick-macos-linux} to install platformio.
 \item Execute the following on debian
 \begin{lstlisting}
 cd ide/piosetup/codes
@@ -988,9 +994,7 @@ blinking
 
 \subsection{App Upload}
 \begin{enumerate}
-  \item Download the app APK file and install it from your File Manager.
-    \begin{lstlisting}[breakatwhitespace=false]
-    https://github.com/gadepall/calculator/raw/refs/heads/changes/software/calci.apk\end{lstlisting}
+  \item Download the app APK file from \url{https://github.com/gadepall/calculator/raw/refs/heads/changes/software/calci.apk} and install it from your File Manager
 \end{enumerate}
 
 
