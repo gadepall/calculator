@@ -224,6 +224,28 @@ y_n = n \cdot y_{n-1}
 \end{algorithm}
 \fi
 
+\begin{table}[h]
+    \centering
+    \renewcommand{\arraystretch}{1.5}
+    \setlength{\tabcolsep}{10pt}
+    \caption{Implemented Functions and their ODEs}
+    \label{tab:diff_eqns_ic}
+    \begin{tabular}{@{} l l c @{}}
+        \toprule
+        \textbf{Function} $y(x)$ & \textbf{Differential Equation} & \textbf{Initial Conditions} \\
+        \midrule
+        $\sin(x)$ & $y'' + y = 0$ & $y(0)=0, \quad y'(0)=1$ \\
+        
+        $\arcsin(x)$ & $\sqrt{(1-x^2)}y' - 1 = 0$ & $y(0)=0$ \\
+        
+        $\arctan(x)$ & $(1+x^2)y' - 1 = 0$ & $y(0)=0$ \\
+        $\ln(x)$ & $ xy' - 1 = 0$ & $y(1)=0$ \\
+        
+        $x^w$ & $xy' - wy = 0$ & $y(1)=1$ \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
 \begin{table*}[htbp]
 \centering
 \caption{RK4 Update Equations for Single-Variable Functions}
@@ -437,15 +459,22 @@ The Shunting Yard Algorithm, together with RPN evaluation, ensures efficient par
 \subsection{Code Repository}
 The complete C implementations of the algorithms discussed in this paper are available at: \url{https://github.com/gadepall/calculator/tree/main/codes}. Instructions for installation of a software based prototype for testing the algorithms are given in Appendix~\ref{appendix:software}.
 
-
-\begin{lstlisting}[caption={Repository Structure in codes/}]
-codes/
-|-- ShuntingYard.c
-|-- inv_sq_root.c
-|-- inv_trig_func.c
-|-- log.c
-|-- power_func.c
-|-- trig_func.c
+\begin{lstlisting}[basicstyle=\ttfamily, frame=single, caption={Repository structure in codes/}]
+codes
+|-- defines.h
+|-- func.c
+|-- func.h
+|-- gpio.c
+|-- gpio.h
+|-- keypad.c
+|-- keypad.h
+|-- lcd.c
+|-- lcd.h
+|-- main.c
+|-- pars.c
+|-- pars.h
+|-- timer.c
+`-- timer.h
 \end{lstlisting}
 
 \section{Hardware Implementation}
