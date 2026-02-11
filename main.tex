@@ -1,9 +1,11 @@
 \documentclass[conference]{IEEEtran}
+\usepackage{gvv-book}
+\usepackage{gvv}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
-\usepackage{listings}
+%\usepackage{listings}
 \usepackage{xcolor}
-\usepackage{amsmath}
+%\usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{booktabs}
@@ -85,9 +87,10 @@ This work bridges that gap by reformulating diverse scientific functions into hi
 %Instead of using ``general expansion methods" (like Taylor/Maclaurin series with many terms), each function was reformulated as a differential equation.
 % The algorithms used to calculate the values are  RK4 (for ODEs), Newton-–Raphson (for refinements like inverse sqrt).
 We first test the numerical algorithms in software before proceeding to hardware. 
-Table 
-\ref{tab:supported}
-lists the functions implemented on the calculator.
+\tabref{tab:supported}
+lists the functions implemented on the calculator while 
+    \tabref{tab:diff_eqns_ic}
+    lists the functions that can be formulated through ODEs \cite{ncert12}.
 %
 \begin{table}[H]
 \centering
@@ -109,26 +112,46 @@ Input Symbols & Digits $0$–$9$, decimal point, parentheses $(,)$ \\
 \end{tabular}
 \end{table}
 
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.5}
+    \setlength{\tabcolsep}{10pt}
+    \caption{Implemented Functions and their ODEs}
+    \label{tab:diff_eqns_ic}
+    \begin{tabular}{@{} l l c @{}}
+        \toprule
+        \textbf{Function} $y(x)$ & \textbf{Differential Equation} & \textbf{Initial Conditions} \\
+        \midrule
+        $\sin(x)$ & $y'' + y = 0$ & $y(0)=0, \quad y'(0)=1$ \\
+        
+        $\arcsin(x)$ & $\sqrt{(1-x^2)}y' - 1 = 0$ & $y(0)=0$ \\
+        
+        $\arctan(x)$ & $(1+x^2)y' - 1 = 0$ & $y(0)=0$ \\
+        $\ln(x)$ & $ xy' - 1 = 0$ & $y(1)=0$ \\
+        
+        $x^w$ & $xy' - wy = 0$ & $y(1)=1$ \\
+        \bottomrule
+    \end{tabular}
+\end{table}
 \iffalse
 \subsection{Runge--Kutta Method (RK4)}
 The fourth-order Runge--Kutta (RK4) method is employed to solve ordinary differential equations for trigonometric and exponential functions.\cite{grewal2014,kreyszig2011} This was chosen over alternative ODE solvers due to maintainability and accuracy. A detailed analysis of the choice of algorithm is given in Appendix~\ref{appendix:comparison}.
 The full derivation and step-by-step procedure for RK4 are provided in Appendix~\ref{appendix:rk4}.
 \fi
-
-\subsection{Trigonometric Functions}
-
-\subsubsection{Sine Function} 
-The sine function is computed by solving the second-order differential equation: \cite{ncert12}
-\begin{align}
-\frac{d^2y}{dx^2} + y = 0, \quad y(0)=0, \quad y'(0)=1
-\end{align}
-using the fourth-order Runge--Kutta method.
-
-System:
-\begin{align}
-\frac{dy}{dx}=z, \quad \frac{dz}{dx}=-y, \quad y(0)=0, \; z(0)=1
-\end{align}
-
+%\subsection{Trigonometric Functions}
+%\subsubsection{Sine Function} 
+The update equation for the sine function 
+%is computed by solving the second-order differential equation: 
+%\begin{align}
+%\frac{d^2y}{dx^2} + y = 0, \quad y(0)=0, \quad y'(0)=1
+%\end{align}
+%using the fourth-order Runge--Kutta method.
+%
+%System:
+%\begin{align}
+%\frac{dy}{dx}=z, \quad \frac{dz}{dx}=-y, \quad y(0)=0, \; z(0)=1
+%\end{align}
+is
 The $ k_1,k_2,k_3,k_4 $ correspond to the RK-4 terms of the equation $ \frac{dy}{dx}=z $ and the $ l_1,l_2,l_3,l_4 $ corresponds to the RK-4 terms of the equation $ \frac{dz}{dx}=-y $
 
 RK4 step values:
@@ -224,27 +247,6 @@ y_n = n \cdot y_{n-1}
 \end{algorithm}
 \fi
 
-\begin{table}[h]
-    \centering
-    \renewcommand{\arraystretch}{1.5}
-    \setlength{\tabcolsep}{10pt}
-    \caption{Implemented Functions and their ODEs}
-    \label{tab:diff_eqns_ic}
-    \begin{tabular}{@{} l l c @{}}
-        \toprule
-        \textbf{Function} $y(x)$ & \textbf{Differential Equation} & \textbf{Initial Conditions} \\
-        \midrule
-        $\sin(x)$ & $y'' + y = 0$ & $y(0)=0, \quad y'(0)=1$ \\
-        
-        $\arcsin(x)$ & $\sqrt{(1-x^2)}y' - 1 = 0$ & $y(0)=0$ \\
-        
-        $\arctan(x)$ & $(1+x^2)y' - 1 = 0$ & $y(0)=0$ \\
-        $\ln(x)$ & $ xy' - 1 = 0$ & $y(1)=0$ \\
-        
-        $x^w$ & $xy' - wy = 0$ & $y(1)=1$ \\
-        \bottomrule
-    \end{tabular}
-\end{table}
 
 \begin{table*}[htbp]
 \centering
