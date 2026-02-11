@@ -94,8 +94,10 @@ lists the functions implemented on the calculator while
 %
 \begin{table}[H]
 \centering
+\setlength{\tabcolsep}{5pt}
 \caption{Supported Functions and Operations}
 \label{tab:supported}
+\resizebox{\columnwidth}{!}{%
 \begin{tabular}{ll}
 \toprule
 \textbf{Category} & \textbf{Functions / Operations} \\
@@ -109,13 +111,14 @@ Basic Arithmetic & $+, -, \times, \div$ \\
 Constants & $\pi, e$ \\
 Input Symbols & Digits $0$–$9$, decimal point, parentheses $(,)$ \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
 \begin{table}[H]
     \centering
     \renewcommand{\arraystretch}{1.5}
-    \setlength{\tabcolsep}{10pt}
+    %\setlength{\tabcolsep}{5pt}
     \caption{Implemented Functions and their ODEs}
     \label{tab:diff_eqns_ic}
     \begin{tabular}{@{} l l c @{}}
@@ -523,6 +526,7 @@ codes
 \caption{Arduino to LCD pin connections}
 \label{tab:arduino-lcd}
 \renewcommand{\arraystretch}{1.2}
+\resizebox{\columnwidth}{!}{%
 \begin{tabular}{llll}
 \toprule
 \textbf{Arduino Pin} & \textbf{LCD Pin} & \textbf{LCD Label} & \textbf{Description} \\
@@ -540,7 +544,8 @@ D7   & 14 & DB7   & Data Bus (4-bit mode) \\
 5V   & 15 & LED+  & Backlight Anode \\
 GND  & 16 & LED-  & Backlight Cathode \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
 
@@ -769,7 +774,7 @@ Col 5 & A4 \\
 \end{figure}
 \subsection{Circuit Schematic}
 The schematic for circuit connections is shown below,
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.5\textwidth]{figs/schematic.png}
     \caption{Schematic of Circuit.}
