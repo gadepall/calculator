@@ -103,7 +103,7 @@ lists the functions implemented on the calculator while
 Trigonometric & $\sin(x), \cos(x), \tan(x)$ \\
 Inverse Trigonometric & $\arcsin(x), \arccos(x), \arctan(x)$ \\
 Exponential / Logarithmic & $e^x, \ln(x)$ \\
-Power / Root & $x^y, \tfrac{1}{\sqrt{x}}$ \\
+Power / Root & $x^y, \sqrt{x}$ \\
 Factorial & $n!$ \\
 Basic Arithmetic & $+, -, \times, \div$ \\
 Constants & $\pi, e$ \\
@@ -214,7 +214,11 @@ The natural logarithm can be obtained by solving the differential equation: \cit
 which has the exact solution $y(x)=\ln(x)$. Using the RK4 method, $\ln(x)$ can be approximated by integrating this ODE from $x=1$ to the target value.
 
 \subsection{Exponential Functions}
-
+\subsubsection{Exponential Function}
+The exponential function $y=\exp(x) = e^x$ satisfies: \cite{ncert12}
+\begin{align}
+  \frac{dy}{dx} = y, \quad y(0) = 1
+\end{align}
 \subsubsection{Power Function} 
 The power function $y=x^w$ satisfies: \cite{ncert12} 
 \begin{align}
@@ -232,6 +236,12 @@ y_n = n \cdot y_{n-1}
 \end{align}
 
 \cite{GVVSharma}
+\subsection{Constants}
+\begin{enumerate}
+  \item \textbf{Pi:} The constant $\pi$ is calculated as $4\cdot\arctan(1)$ using the implementation above. The calculated value is $3.141593$.
+  \item \textbf{Euler Constant:} The constant $e$ is calculated as $\exp(1)$ using the implementation above. The calculated value is $2.718282$.
+\end{enumerate}
+
 \iffalse
 \begin{algorithm}
 \caption{Recursive Factorial Function}

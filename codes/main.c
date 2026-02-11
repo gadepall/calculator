@@ -94,6 +94,7 @@ int main(void) {
     timer_init();
     lcd_init();
     keypad_init();
+    math_init();
 
     lcd_print("Calculator");
     delay_ms(1000);

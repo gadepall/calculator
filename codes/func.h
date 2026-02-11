@@ -14,5 +14,6 @@ double m_asin(double x);
 double m_acos(double x);
 double m_atan(double x);
 double m_log10(double x);
+void math_init(void);
 
 #endif // FUNC_H

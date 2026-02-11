@@ -1,12 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define PI 3.1415926535
-#define LN10 2.30258509299
 #define H  0.01
 #define ORD 2
 
 #define DEBUG 0
+
+double PI;
 
 typedef void (*sys_f)(double t, double *y, double *dy, void *ctx);
 
@@ -58,6 +58,7 @@ void d_pow(double t, double *y, double *dy, void *ctx) {
 }
 
 // my funcs
+
 float Q_sqrt(float n) {
     long i; float x2, y; const float th = 1.5F;
     x2 = n * 0.5F; y = n;
@@ -89,6 +90,9 @@ double m_atan(double x) {
     solve(0,x,y,1,d_atan,NULL);
     return y[0];
 }
+void math_init() {
+    PI = 4.0 * m_atan(1.0);
+}
 double m_asin(double x) {
     if (m_abs(x) > 1.0 ) return 0.0/0.0;
     if (m_abs(x-1.0) <= 1e-9) return PI/2;
@@ -118,7 +122,7 @@ double m_ln(double x) {
     return y[0];
 }
 double m_log10(double x) {
-    return m_ln(x) / LN10;
+    return m_ln(x) / m_ln(10.0);
 }
 
 double m_pow(double x, double w) {
