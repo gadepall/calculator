@@ -840,7 +840,7 @@ The method obtains an initial approximation by manipulating the IEEE~754 floatin
     \item An optional second iteration yields nearly full precision. \\
 \end{enumerate} 
 
-\subsubsection*{Newton--Raphson Refinement}
+\subsubsection*{Mathematical Formulation}
 
 We want to approximate
 \begin{align} 
@@ -860,9 +860,11 @@ y_{k+1} &= y_k - \frac{f(y_k)}{f'(y_k)} \\[6pt]
         &= y_k \left(\tfrac{3}{2} - \tfrac{1}{2} x y_k^2\right).
 \end{align}
 
+For the Quake III algorithm, $y_0 = A - (y_0 \gg 1)$, where the constant $A=0x5f3759df$.
+
 Thus one Newton--Raphson iteration is simply
 \begin{align}
-y \;\gets\; y \left( 1.5 - 0.5 \, x \, y^2 \right).
+y \;\gets\; y_0 \left( 1.5 - 0.5 \, x \, y_0^2 \right).
 \end{align}
 
 \section{Comparative Analysis of Numerical Methods}
