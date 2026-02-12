@@ -268,54 +268,28 @@ It relies on two structures:
     \item An \textbf{output queue} for the final postfix expression
 \end{itemize}
 
-\subsection{Reverse Polish Notation (RPN)}
-Reverse Polish Notation, also known as postfix notation, is a way of writing mathematical expressions in which 
-operators follow their operands. Unlike infix notation (e.g., $3 + 4$), RPN eliminates the need for parentheses by 
-unambiguously encoding operator precedence.
+Evaluation of this RPN is done using a stack as given in \cite{kernighan1988}. The algorithm runs in $O(n)$ time, where $n$ is the number of tokens.  
 
-\begin{itemize}
-    \item Example (infix): $3 + 4$
-    \item Equivalent RPN: $3 \ 4 \ +$
-\end{itemize}
-
-This simplicity makes RPN especially suitable for evaluation using a stack-based algorithm.
-
-
-\subsection{Evaluating RPN}
-Evaluation of RPN uses a stack:
-\begin{enumerate}
-    \item Scan tokens left to right.
-    \item Push numbers on the stack.
-    \item For operators, pop required operands, apply operation, push result.
-\end{enumerate}
-
-For the above example, evaluating the postfix expression gives the result $1$ as expected .
-
-\subsection{Complexity and Applications}
-The algorithm runs in $O(n)$ time, where $n$ is the number of tokens.  
-Combined with RPN evaluation, it provides an efficient method for handling expressions in calculators, compilers, and symbolic computation systems.
-
-\subsection{Function Handling}
-The Shunting Yard Algorithm can also be used to implement functions such as $\sin(x)$, $\cos(x)$, and others. Function handling follows these rules:
-
-\begin{enumerate}
-    \item When a function token is encountered, it is pushed onto the operator stack.
-    \item Arguments are processed as sub-expressions normally.
-    \item When the closing parenthesis ``)'' is reached:
-    \begin{itemize}
-        \item Operators are popped from the stack to the output queue until the matching ``('' is found.
-        \item The function token itself is then moved from the stack to the output queue.
-    \end{itemize}
-\end{enumerate}
-
-As a result, function calls are correctly represented in postfix form. For example:
-\begin{align}
-\sin(x) \;\;\rightarrow\;\; x \ \sin, 
-\end{align}
+%\subsection{Function Handling}
+%The Shunting Yard Algorithm can also be used to implement functions such as $\sin(x)$, $\cos(x)$, and others. Function handling follows these rules:
+%
+%\begin{enumerate}
+%    \item When a function token is encountered, it is pushed onto the operator stack.
+%    \item Arguments are processed as sub-expressions normally.
+%    \item When the closing parenthesis ``)'' is reached:
+%    \begin{itemize}
+%        \item Operators are popped from the stack to the output queue until the matching ``('' is found.
+%        \item The function token itself is then moved from the stack to the output queue.
+%    \end{itemize}
+%\end{enumerate}
+%
+%As a result, function calls are correctly represented in postfix form. For example:
+%\begin{align}
+%\sin(x) \;\;\rightarrow\;\; x \ \sin, 
+%\end{align}
 
 
-\subsection{Conclusion}
-The Shunting Yard Algorithm, together with RPN evaluation, ensures efficient parsing and evaluation of mathematical expressions. It respects operator precedence, associativity, and bracket handling, making it a cornerstone in expression processing across computing applications.
+The Shunting Yard Algorithm, together with RPN evaluation, respects operator precedence, associativity, and bracket handling, making it a cornerstone in expression processing across computing applications.
 
 \subsection{Code Repository}
 The complete C implementations of the algorithms discussed in this paper are available at: \url{https://github.com/gadepall/calculator/tree/main/codes}. Instructions for installation of a software based prototype for testing the algorithms are given in Appendix~\ref{appendix:software}.
