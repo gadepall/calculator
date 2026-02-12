@@ -261,114 +261,13 @@ $y_n+\tfrac{1}{6}(k_1+2k_2+2k_3+k_4)$ \\
 
 The Shunting Yard algorithm is employed for converting infix expressions into postfix form for evaluation.
 
-\subsection{Overview}
-The \textbf{Shunting Yard Algorithm}, proposed by Edsger Dijkstra, is a method for converting mathematical expressions in infix notation into postfix notation (Reverse Polish Notation, RPN).  
+The \textbf{Shunting Yard Algorithm}, proposed by Edsger Dijkstra, is a method for converting mathematical expressions in infix notation into postfix notation (Reverse Polish Notation, RPN)\cite{dijkstra1961}.
 It relies on two structures:
 \begin{itemize}
     \item A \textbf{stack} for operators/functions
     \item An \textbf{output queue} for the final postfix expression
 \end{itemize}
 
-\subsection{Algorithm Steps}
-\begin{enumerate}
-    \item Initialize an empty stack and output queue.
-    \item For each token:
-    \begin{enumerate}
-        \item Numbers $\rightarrow$ add to output.
-        \item Functions $\rightarrow$ push to stack.
-        \item Operators $\rightarrow$ pop higher/equal precedence operators from stack to output (respecting associativity), then push current operator.
-        \item ``('' $\rightarrow$ push to stack.
-        \item ``)'' $\rightarrow$ pop to output until matching ``('' is found, discard brackets.
-    \end{enumerate}
-    \item After processing, pop remaining operators to output.
-\end{enumerate}
-
-\begin{algorithm}
-\caption{Shunting Yard Algorithm (Infix to Postfix)}
-\begin{algorithmic}[1]
-\Function{ShuntingYard}{expr}
-    \State Initialize empty stack $operators$
-    \State Initialize empty string $output$
-    \For{each character $c$ in $expr$}
-        \If{$c$ is a number or '.'}
-            \State Append $c$ to $output$ until number ends
-            \State Append space to $output$
-        \ElsIf{$c$ is a function}
-            \State Push $c$ onto $operators$
-        \ElsIf{$c = ($}
-            \State Push $c$ onto $operators$
-            \State Increment $unmatched\_brackets$
-        \ElsIf{$c = )$}
-            \While{Top of $operators \neq ($}
-                \State Pop from $operators$ and append to $output$
-            \EndWhile
-            \State Pop '(' from $operators$
-            \State Decrement $unmatched\_brackets$
-            \If{Top of $operators$ is a function}
-                \State Pop function and append to $output$
-            \EndIf
-        \ElsIf{$c$ is an operator in $\{+,-,*,/,^,!\}$}
-            \While{$operators$ not empty \textbf{and} 
-                   precedence(Top of $operators$) $\geq$ precedence($c$)}
-                \State Pop from $operators$ and append to $output$
-            \EndWhile
-            \State Push $c$ onto $operators$
-        \EndIf
-    \EndFor
-    \While{$operators$ not empty}
-        \State Pop from $operators$ and append to $output$
-    \EndWhile
-    \State \Return $output$
-\EndFunction
-\end{algorithmic}
-\end{algorithm}
-
-\subsection{Operator Precedence}
-\begin{table}[H]
-\centering
-\caption{Operator Precedence and Associativity}
-\label{tab:precedence}
-\begin{tabular}{lcc}
-\toprule
-\textbf{Operator} & \textbf{Precedence} & \textbf{Associativity} \\
-\midrule
-$\vee$ (power) & 4 & Right \\
-$*$, $/$ & 3 & Left \\
-$+$, $-$ & 2 & Left \\
-\bottomrule
-\end{tabular}
-\end{table}
-\subsection{Example}
-For the expression $3 + 4 * 2 / (1 - 5)$, the Shunting Yard Algorithm yields the postfix form:
-\begin{align}
-3 \ 4 \ 2 \ * \ 1 \ 5 \ - \ / \ +
-\end{align}
-
-Algorithmic Steps :
-
-\begin{table}[htbp]
-\centering
-\caption{Shunting Yard Example for $3 + 4 * 2 / (1 - 5)$}
-\label{tab:example}
-\begin{tabular}{llll}
-\toprule
-\textbf{Token} & \textbf{Action} & \textbf{Stack} & \textbf{Output} \\
-\midrule
-3 & Add to output &  & 3 \\
-+ & Push to stack & + & 3 \\
-4 & Add to output & + & 3 4 \\
-* & Push to stack & + * & 3 4 \\
-2 & Add to output & + * & 3 4 2 \\
-/ & Pop *, push / & + / & 3 4 2 * \\
-( & Push to stack & + / ( & 3 4 2 * \\
-1 & Add to output & + / ( & 3 4 2 * 1 \\
-- & Push to stack & + / ( - & 3 4 2 * 1 \\
-5 & Add to output & + / ( - & 3 4 2 * 1 5 \\
-) & Pop until ( & + / & 3 4 2 * 1 5 - \\
-End & Pop stack &  & 3 4 2 * 1 5 - / + \\
-\bottomrule
-\end{tabular}
-\end{table}
 \subsection{Reverse Polish Notation (RPN)}
 Reverse Polish Notation, also known as postfix notation, is a way of writing mathematical expressions in which 
 operators follow their operands. Unlike infix notation (e.g., $3 + 4$), RPN eliminates the need for parentheses by 
