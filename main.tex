@@ -259,17 +259,18 @@ $y_n+\tfrac{1}{6}(k_1+2k_2+2k_3+k_4)$ \\
 
 \subsection{Expression Parsing}
 
-The Shunting Yard algorithm is employed for converting infix expressions into postfix form for evaluation.
-
-The \textbf{Shunting Yard Algorithm}, proposed by Edsger Dijkstra, is a method for converting mathematical expressions in infix notation into postfix notation (Reverse Polish Notation, RPN)\cite{dijkstra1961}.
-It relies on two structures:
+The Shunting Yard algorithm \cite{dijkstra1961} is employed for converting infix expressions into postfix form (Reverse Polish Notation, RPN \cite{kernighan1988})  for evaluation.
+%The \textbf{Shunting Yard Algorithm}, proposed by Edsger Dijkstra, is a method for converting mathematical expressions in infix notation into postfix notation 
+It relies on two structures
 \begin{itemize}
-    \item A \textbf{stack} for operators/functions
-    \item An \textbf{output queue} for the final postfix expression
+    \item A stack for operators/functions
+    \item An output queue for the final postfix expression
 \end{itemize}
+The Shunting Yard Algorithm, together with RPN evaluation, respects operator precedence, associativity, and bracket handling, making it a cornerstone in expression processing across computing applications.
+Instructions for installation of a software based prototype for testing the algorithms are given in Appendix~\ref{appendix:software}.
 
-Evaluation of this RPN is done using a stack as given in \cite{kernighan1988}. The algorithm runs in $O(n)$ time, where $n$ is the number of tokens.  
 
+%Evaluation of this RPN is done using a stack as given in . The algorithm runs in $O(n)$ time, where $n$ is the number of tokens.  
 %\subsection{Function Handling}
 %The Shunting Yard Algorithm can also be used to implement functions such as $\sin(x)$, $\cos(x)$, and others. Function handling follows these rules:
 %
@@ -287,31 +288,6 @@ Evaluation of this RPN is done using a stack as given in \cite{kernighan1988}. T
 %\begin{align}
 %\sin(x) \;\;\rightarrow\;\; x \ \sin, 
 %\end{align}
-
-
-The Shunting Yard Algorithm, together with RPN evaluation, respects operator precedence, associativity, and bracket handling, making it a cornerstone in expression processing across computing applications.
-
-\subsection{Code Repository}
-The complete C implementations of the algorithms discussed in this paper are available at: \url{https://github.com/gadepall/calculator/tree/main/codes}. Instructions for installation of a software based prototype for testing the algorithms are given in Appendix~\ref{appendix:software}.
-
-\begin{lstlisting}[basicstyle=\ttfamily, frame=single, caption={Repository structure in codes/}]
-codes
-|-- defines.h
-|-- func.c
-|-- func.h
-|-- gpio.c
-|-- gpio.h
-|-- keypad.c
-|-- keypad.h
-|-- lcd.c
-|-- lcd.h
-|-- main.c
-|-- pars.c
-|-- pars.h
-|-- timer.c
-`-- timer.h
-\end{lstlisting}
-
 \section{Hardware Implementation}
 
 \subsection{Hardware Required}
@@ -891,6 +867,26 @@ gcc -shared -o libcalc.so -fPIC func.c pars.c\end{lstlisting}
 python3 server.py\end{lstlisting}
   \item The app now functions as a scientific calculator.
 \end{enumerate}
+
+\subsection{Code Repository}
+The complete C implementations of the algorithms discussed in this paper are available at: \url{https://github.com/gadepall/calculator/tree/main/codes}. 
+\begin{lstlisting}[basicstyle=\ttfamily, frame=single, caption={Repository structure in codes/}]
+codes
+|-- defines.h
+|-- func.c
+|-- func.h
+|-- gpio.c
+|-- gpio.h
+|-- keypad.c
+|-- keypad.h
+|-- lcd.c
+|-- lcd.h
+|-- main.c
+|-- pars.c
+|-- pars.h
+|-- timer.c
+`-- timer.h
+\end{lstlisting}
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}
