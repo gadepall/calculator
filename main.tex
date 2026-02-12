@@ -142,34 +142,49 @@ The fourth-order Runge--Kutta (RK4) method is employed to solve ordinary differe
 The full derivation and step-by-step procedure for RK4 are provided in Appendix~\ref{appendix:rk4}.
 \fi
 %\subsection{Trigonometric Functions}
-%\subsubsection{Sine Function} 
-The update equation for the sine function 
-%is computed by solving the second-order differential equation: 
+\subsection{RK4 for the Sine Function} 
+The second-order differential equation
+for the sine function 
+listed in 
+    \tabref{tab:diff_eqns_ic}
+    can be expressed as
+%is computed by solving 
 %\begin{align}
 %\frac{d^2y}{dx^2} + y = 0, \quad y(0)=0, \quad y'(0)=1
 %\end{align}
 %using the fourth-order Runge--Kutta method.
 %
 %System:
-%\begin{align}
-%\frac{dy}{dx}=z, \quad \frac{dz}{dx}=-y, \quad y(0)=0, \; z(0)=1
-%\end{align}
-is
-The $ k_1,k_2,k_3,k_4 $ correspond to the RK-4 terms of the equation $ \frac{dy}{dx}=z $ and the $ l_1,l_2,l_3,l_4 $ corresponds to the RK-4 terms of the equation $ \frac{dz}{dx}=-y $
-
-RK4 step values:
 \begin{align}
-k_1 &= h z_n, \\
-l_1 &= -h y_n, \\
-k_2 &= h \left(z_n+\tfrac{l_1}{2}\right), \\
-l_2 &= -h \left(y_n+\tfrac{k_1}{2}\right), \\
-k_3 &= h \left(z_n+\tfrac{l_2}{2}\right), \\
-l_3 &= -h \left(y_n+\tfrac{k_2}{2}\right), \\
-k_4 &= h(z_n+l_3), \\
-l_4 &= -h(y_n+k_3), \\
-y_{n+1} &= y_n+\frac{1}{6}(k_1+2k_2+2k_3+k_4), \\
-z_{n+1} &= z_n+\tfrac{1}{6}(l_1+2l_2+2l_3+l_4).
+\frac{dy}{dx}=z, \quad \frac{dz}{dx}=-y, \quad y(0)=0, \; z(0)=1
 \end{align}
+The RK4 method then yields the update equation 
+\cite{grewal2014}
+%The $ k_1,k_2,k_3,k_4 $ correspond to the RK-4 terms of the equation $ \frac{dy}{dx}=z $ and the $ l_1,l_2,l_3,l_4 $ corresponds to the RK-4 terms of the equation $ \frac{dz}{dx}=-y $
+%RK4 step values:
+\begin{align}
+	\begin{aligned}
+k_1 &= h z_n, & l_1 &= -h y_n \\
+k_2 &= h \left(z_n+\tfrac{l_1}{2}\right), & l_2 &= -h \left(y_n+\tfrac{k_1}{2}\right) \\
+k_3 &= h \left(z_n+\tfrac{l_2}{2}\right), & l_3 &= -h \left(y_n+\tfrac{k_2}{2}\right) \\
+k_4 &= h(z_n+l_3), & l_4 &= -h(y_n+k_3) \\
+y_{n+1} &= y_n+\tfrac{1}{6}
+\lbrak{k_1+2k_2} & z_{n+1} &= z_n+\tfrac{1}{6}\lbrak{l_1+2l_2}
+\\
+		 &\quad \rbrak{+2k_3+k_4} & &\quad \rbrak{+2l_3+l_4}
+\end{aligned}
+%k_1 &= h z_n, \\
+%l_1 &= -h y_n, \\
+%k_2 &= h \left(z_n+\tfrac{l_1}{2}\right), \\
+%l_2 &= -h \left(y_n+\tfrac{k_1}{2}\right), \\
+%k_3 &= h \left(z_n+\tfrac{l_2}{2}\right), \\
+%l_3 &= -h \left(y_n+\tfrac{k_2}{2}\right), \\
+%k_4 &= h(z_n+l_3), \\
+%l_4 &= -h(y_n+k_3), \\
+%y_{n+1} &= y_n+\frac{1}{6}(k_1+2k_2+2k_3+k_4), \\
+%z_{n+1} &= z_n+\tfrac{1}{6}(l_1+2l_2+2l_3+l_4).
+\end{align}
+
 
 \subsubsection{Cosine Function} 
 The cosine function is computed by $\sin(\frac{\pi}{2} - x)$.\cite{ncert12}
@@ -813,7 +828,7 @@ k_3 &= h\cdot f(x_n + h/2, y_n + k_2/2), \\
 k_4 &= h\cdot f(x_n + h, y_n + k_3).
 \end{align}
 
-\subsubsection*{Quake III Algorithm}
+\section{Quake III Algorithm}
 
 \label{appendix:inv_sqrt}
 
