@@ -560,7 +560,7 @@ Col 5 & A4 \\
 The schematic for circuit connections is shown below,
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\textwidth]{figs/schematic.jpg}
+    \includegraphics[width=0.5\textwidth]{figs/schematic.png}
     \caption{Schematic of Circuit.}
     \label{fig:circuit_schematic}
 \end{figure}
