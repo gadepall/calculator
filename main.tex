@@ -12,6 +12,7 @@
 \usepackage{url}
 \usepackage{circuitikz}
 \usepackage{hyperref}
+\usepackage{tabularx}
 \lstset{
   basicstyle=\ttfamily\small,
   keywordstyle=\color{blue}\bfseries,
@@ -291,6 +292,7 @@ Instructions for installation of a software based prototype for testing the algo
 \section{Hardware Implementation}
 
 \subsection{Hardware Required}
+
 \begin{table}[H]
 \centering
 \caption{Materials required for the scientific calculator}
@@ -315,7 +317,6 @@ Instructions for installation of a software based prototype for testing the algo
     \item A 16$\times$2 LCD connected to Arduino for showing results.
     \item Connections as shown in Fig.~\ref{fig:circuit_schematic}.
 \end{itemize}
-
 \subsection{Circuit Connections}
 \begin{table}[H]
 \centering
@@ -365,8 +366,8 @@ This reduces the number of pins required to implement a calculator with 25 butto
 \midrule
 Row 1 & 0 & 1 & 2 & 3 & 4 \\
 Row 2 & 5 & 6 & 7 & 8 & 9 \\
-Row 3 & + & - & $\times$ & $\div$ & $\sin($ \\
-Row 4 & $\cos($ & $\tan($ & $e^{(}$ & $\ln($ & Clear \\
+Row 3 & + & - & $\times$ & $\div$ & $\sin(x)$ \\
+Row 4 & $\cos(x)$ & $\tan(x)$ & $exp(x)$ & $\ln(x)$ & Clear \\
 Row 5 & Backspace & . & = & Mode shift& $\pi$ \\
 \bottomrule
 \end{tabular}
@@ -381,8 +382,8 @@ Row 5 & Backspace & . & = & Mode shift& $\pi$ \\
 \midrule
 Row 1  & 0 & 1 & 2 & 3 & 4 \\
 Row 2  & 5 & 6 & 7 & 8 & 9 \\
-Row 3  & ( & ) & $x^{y}$ & $\text{fact}($ & $\sin^{-1}($ \\
-Row 4  & $\cos^{-1}($ & $\tan^{-1}($ & mod & $\log_{10}($ & Clear \\
+Row 3  & ( & ) & $x^{y}$ & $\text{fact}(x)$ & $\sin^{-1}(x)$ \\
+Row 4  & $\cos^{-1}(x)$ & $\tan^{-1}(x)$ & mod(x) & $\log_{10}(x)$ & Clear \\
 Row 5  & Backspace & . & = & Mode shift& $\pi$ \\
 \bottomrule
 \end{tabular}
