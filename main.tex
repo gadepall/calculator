@@ -189,8 +189,9 @@ y_n = n y_{n-1}
 \end{align}
 
 \item 
-	The fast inverse square root algorithm (Quake III method) is used to efficiently compute $x^{-1/2}$ which is then used for computing $\sqrt{x}$.  See 
-Appendix~\ref{appendix:inv_sqrt} for details.
+	The fast inverse square root algorithm (Quake III method) is used to efficiently compute $1/\sqrt{x}$ which is then used for computing $\sqrt{x}$. 
+	%See 
+%Appendix~\ref{appendix:inv_sqrt} for details.
 %
 \end{enumerate}
 \iffalse
@@ -273,16 +274,16 @@ Instructions for installation of a software based prototype for testing the algo
 \section{Calculator: Hardware Implementation}
 
 \tabref {tab:materials}
-lists the components required for the scientifical calculator hardware.
+lists the components required for the scientific calculator hardware.
 The Arduino-LCD connections are available in \tabref{tab:arduino-lcd}.  The calculator operates in two modes.  The set of functions and the respective keys for the two modes are listed in 
 Tables 
 \ref{tab:mode1}
 and
 \ref{tab:mode2}.
+The schematic for circuit connections is available in 
 \subsection{Button Matrix}
 The button matrix is a grid of push-buttons arranged in rows and columns. It allows multiple buttons to be connected to the microcontroller using fewer pins.
-
-\textbf{Working Principle:}
+%\textbf{Working Principle:}
 \begin{itemize}
     \item The Arduino scans the matrix by activating each row (setting it LOW) one at a time while reading the columns.
     \item When a button is pressed, it completes the circuit.
@@ -556,8 +557,8 @@ Col 5 & A4 \\
 
 \label{fig:my_label}
 \end{figure}
-\subsection{Circuit Schematic}
-The schematic for circuit connections is shown below,
+%\subsection{Circuit Schematic}
+\figref{fig:circuit_schematic}
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.5\textwidth]{figs/schematic.jpg}
@@ -577,8 +578,9 @@ The schematic for circuit connections is shown below,
 
 
 \appendices
+\section{Numerical Methods}
 
-\section{Runge-Kutta Method (RK4)}
+\subsection{Runge-Kutta Method (RK4)}
 \label{appendix:rk4}
 The RK4 method is a numerical technique to solve
 \begin{align}
@@ -597,45 +599,44 @@ k_3 &= h f(x_n + h/2, y_n + k_2/2), \\
 k_4 &= h f(x_n + h, y_n + k_3).
 \end{align}
 
-\section{Quake III Algorithm}
+\iffalse
+\subsection{Quake III Algorithm}
 
 \label{appendix:inv_sqrt}
 
-The method obtains an initial approximation by manipulating the IEEE~754 floating-point representation of $x$, then refines it using Newton--Raphson iterations\cite{lomont2003}.
+%The method obtains an initial approximation by manipulating the IEEE~754 floating-point representation of $x$, then refines it using Newton--Raphson iterations\cite{lomont2003}.
+%
+%\begin{enumerate}
+%    \item Bit manipulation with a ``magic constant'' ($0x5f3759df$) produces an initial guess $y_0$.
+%    \item A single Newton--Raphson iteration dramatically improves accuracy.
+%    \item An optional second iteration yields nearly full precision. \\
+%\end{enumerate} 
 
-\begin{enumerate}
-    \item Bit manipulation with a ``magic constant'' ($0x5f3759df$) produces an initial guess $y_0$.
-    \item A single Newton--Raphson iteration dramatically improves accuracy.
-    \item An optional second iteration yields nearly full precision. \\
-\end{enumerate} 
+%\subsubsection*{Mathematical Formulation}
 
-\subsubsection*{Mathematical Formulation}
-
-We want to approximate
-\begin{align} 
-y = x^{-\frac{1}{2}}.
-\end{align}
-
+%We want to approximate
+%\begin{align} 
+%y = x^{-\frac{1}{2}}.
+%\end{align}
 Define
 \begin{align}
 f(y) = \frac{1}{y^2} - x, \qquad f'(y) = -\frac{2}{y^3}.
 \end{align}
-
-Applying Newton--Raphson,
+Applying the Newton-Raphson method \cite{grewal2014},
 \begin{align}
 y_{k+1} &= y_k - \frac{f(y_k)}{f'(y_k)} \\[6pt]
-        &= y_k - \frac{\tfrac{1}{y_k^2} - x}{-\tfrac{2}{y_k^3}} \\[6pt]
-        &= y_k + \frac{y_k}{2}\left(1 - x y_k^2 \right) \\[6pt]
+%        &= y_k - \frac{\tfrac{1}{y_k^2} - x}{-\tfrac{2}{y_k^3}} \\[6pt]
+%        &= y_k + \frac{y_k}{2}\left(1 - x y_k^2 \right) \\[6pt]
         &= y_k \left(\tfrac{3}{2} - \tfrac{1}{2} x y_k^2\right).
 \end{align}
-
+upon simplification.
 For the Quake III algorithm, $y_0 = A - (y_0 \gg 1)$, where the constant $A=0x5f3759df$.
 
 Thus one Newton--Raphson iteration is simply
 \begin{align}
 y \;\gets\; y_0 \left( 1.5 - 0.5 \, x \, y_0^2 \right).
 \end{align}
-
+\fi
 \section{Comparative Analysis of Numerical Methods}
 \label{appendix:comparison}
 
