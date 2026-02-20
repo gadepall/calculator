@@ -170,15 +170,19 @@ where $ k_1,k_2,k_3,k_4 $ correspond to the RK-4 terms of the equation $ \frac{d
 in \tabref{tab:rk4_single}.
 The other functions/constants are computed using \cite{ncert12}
 \begin{align}
+\begin{split}
 %\begin{aligned}
 	\cos x &= \sin\brak{\frac{\pi}{2} - x},
 	\tan x = \frac{\sin x }{\cos x},
-	\cos^{-1}\brak{x} = \frac{\pi}{2} - \sin^{-1}\brak{x},
 	\\
-	\pi &=4\tan^{-1}\brak{1}
+	\cos^{-1}\brak{x} &= \frac{\pi}{2} - \sin^{-1}\brak{x},
+	\pi =4\tan^{-1}\brak{1}
 %\end{aligned}
+\end{split}
 \end{align}
 %
+The reason for choosing RK4 over other numerical techniques is discussed in some detail in 
+\appref{appendix:comparison}
 \subsection{Non-RK4 Functions}
 \begin{enumerate}
 	\item The factorial 
@@ -598,149 +602,107 @@ k_2 &= h f(x_n + h/2, y_n + k_1/2), \\
 k_3 &= h f(x_n + h/2, y_n + k_2/2), \\
 k_4 &= h f(x_n + h, y_n + k_3).
 \end{align}
-
-\iffalse
-\subsection{Quake III Algorithm}
-
-\label{appendix:inv_sqrt}
-
-%The method obtains an initial approximation by manipulating the IEEE~754 floating-point representation of $x$, then refines it using Newton--Raphson iterations\cite{lomont2003}.
-%
-%\begin{enumerate}
-%    \item Bit manipulation with a ``magic constant'' ($0x5f3759df$) produces an initial guess $y_0$.
-%    \item A single Newton--Raphson iteration dramatically improves accuracy.
-%    \item An optional second iteration yields nearly full precision. \\
-%\end{enumerate} 
-
-%\subsubsection*{Mathematical Formulation}
-
-%We want to approximate
-%\begin{align} 
-%y = x^{-\frac{1}{2}}.
-%\end{align}
-Define
-\begin{align}
-f(y) = \frac{1}{y^2} - x, \qquad f'(y) = -\frac{2}{y^3}.
-\end{align}
-Applying the Newton-Raphson method \cite{grewal2014},
-\begin{align}
-y_{k+1} &= y_k - \frac{f(y_k)}{f'(y_k)} \\[6pt]
-%        &= y_k - \frac{\tfrac{1}{y_k^2} - x}{-\tfrac{2}{y_k^3}} \\[6pt]
-%        &= y_k + \frac{y_k}{2}\left(1 - x y_k^2 \right) \\[6pt]
-        &= y_k \left(\tfrac{3}{2} - \tfrac{1}{2} x y_k^2\right).
-\end{align}
-upon simplification.
-For the Quake III algorithm, $y_0 = A - (y_0 \gg 1)$, where the constant $A=0x5f3759df$.
-
-Thus one Newton--Raphson iteration is simply
-\begin{align}
-y \;\gets\; y_0 \left( 1.5 - 0.5 \, x \, y_0^2 \right).
-\end{align}
-\fi
-\section{Comparative Analysis of Numerical Methods}
+\subsection{Comparative Analysis}
 \label{appendix:comparison}
-
-Three criteria were considered in the choosing of RK4 as the algorithm for a microcontroller base:
+The following criteria were considered for choosing an algorithm for a microcontroller base.
 \begin{itemize}
   \item Computing complexity
   \item Accuracy for the chosen precision level
   \item Memory usage
 \end{itemize}
-
-\subsection{Rejected Alternative Algorithms}
-
-\subsubsection{Euler's Method}
-The Euler method is the simplest numerical solver. The basic idea is to approximate the curve by its tangent line, meaning it is a first order solver.
-\begin{itemize}\item\textbf{Forward Euler (Explicit)}
-The slope at the current point is used as the approximation for the value at the end of the step.
+The following numerical methods were considered before finalizing the RK4 method.
+\begin{enumerate}
+	\item {Euler's Method:}
+\begin{enumerate}
+%The Euler method is the simplest numerical solver. The basic idea is to approximate the curve by its tangent line, meaning it is a first order solver.
+	\item {Forward Euler (Explicit)}
+%The slope at the current point is used as the approximation for the value at the end of the step.
 \begin{align}
 y_{n+1} = y_n + h\cdot f(x_n, y_n)
 \end{align}
 
-\item\textbf{Backward Euler (Implicit)}
-  The slope at the end of the step is used as the approximation. $y_{n+1}$ is present on both sides of the equation, so another algorithm is needed to separate it at each step.
+\item {Backward Euler (Implicit)}
+%  The slope at the end of the step is used as the approximation. $y_{n+1}$ is present on both sides of the equation, so another algorithm is needed to separate it at each step.
 \begin{align}
 y_{n+1} = y_n + h \cdot f(x_{n+1}, y_{n+1})
 \end{align}
-\item \begin{itemize}
-  \item \textbf{Drawback:} For a step size of $h$, the error is $O(h)$. Thus to reduce error, the step size would have to be increased drastically, which is computationally prohibitive.
-\end{itemize}
-\end{itemize}
-
-\subsubsection{Trapezoidal Rule}
-This is a second-order method approximates the integral by dividing the area under the curve into trapezoids instead of rectangles.
+\end{enumerate}
+	%\begin{itemize}
+%  \item \textbf{Drawback:} For a step size of $h$, the error is $O(h)$. Thus to reduce error, the step size would have to be increased drastically, which is computationally prohibitive.
+%\end{itemize}
+\item {Trapezoidal Rule}
+\begin{enumerate}
+	\item Explicit
+%This is a second-order method approximates the integral by dividing the area under the curve into trapezoids instead of rectangles.
 \begin{align}
 y_{n+1} = y_n + \frac{h}{2}\cdot(f(x_n, y_n) + f(x_{n+1}, y_{n+1}))
 \end{align}
-\begin{itemize}
-  \item \begin{itemize}
-\item \textbf{Drawbacks:} The error is $O(h^2)$. It is also implicit, meaning each step would require another iterative solving mechanism such as Newton--Rhapson to separate the target variable.
-\end{itemize}
-\end{itemize}
-
-\subsubsection*{Aside: Signal Processing Perspective}
-Another way to approach the previous formula is tranforming it through the $s$-domain and $z$-domain in succession, this reduces the work in solving of ODEs to simple algebraic manipulations. As an example, presented here is the solution to the \textit{sin} function, whose ODE is:
+%\begin{itemize}
+%  \item \begin{itemize}
+%\item \textbf{Drawbacks:} The error is $O(h^2)$. It is also implicit, meaning each step would require another iterative solving mechanism such as Newton--Rhapson to separate the target variable.
+%\end{itemize}
+%\end{itemize}
+%
+%\*{Aside: Signal Processing Perspective}
+\item Digital Filter: Another way to approach the previous formula is tranforming it through the $s$-domain and $z$-domain in succession, this reduces the work in solving of ODEs to simple algebraic manipulations. As an example, presented here is the solution to the \textit{sin} function, whose ODE is
 \begin{equation}
   y'' + y = 0
 \end{equation}
-
-1. \textbf{Laplace Transform:} Take the Laplace transform of the ODE (assuming zero initial conditions for the transfer function derivation):
-   $$ s^2 Y(s) + Y(s) = 1 \implies Y(s) = H(s) = \frac{1}{s^2+1}$$
-
-2. \textbf{Bilinear Substitution:} Apply the Bilinear transform substitution $s \approx \frac{2}{h} \frac{1 - z^{-1}}{1 + z^{-1}}$, where $h$ is the step:
-   $$  H(z) = \frac{1}{\left[ \left( \frac{2}{h} \frac{1 - z^{-1}}{1 + z^{-1}} \right)^2 + 1 \right]} $$
-
-3. \textbf{Algebraic Simplification:} Let $c = 2/h$, $A = c^2+1$. Simplify and group by powers of $z$
+\begin{enumerate}
+	\item {Laplace Transform:} Take the Laplace transform of the ODE (assuming zero initial conditions for the transfer function derivation):
+\begin{equation}
+ s^2 Y(s) + Y(s) = 1 \implies Y(s) = H(s) = \frac{1}{s^2+1}
+\end{equation}
+\item {Bilinear Substitution:} Apply the Bilinear transform substitution $s \approx \frac{2}{h} \frac{1 - z^{-1}}{1 + z^{-1}}$, where $h$ is the step:
+\begin{equation}
+  H(z) = \frac{1}{\left[ \left( \frac{2}{h} \frac{1 - z^{-1}}{1 + z^{-1}} \right)^2 + 1 \right]} 
+\end{equation}
+\item {Algebraic Simplification:} Let $c = 2/h$, $A = c^2+1$. Simplify and group by powers of $z$
 \begin{align}
   H(z) &= \frac{(1 + z^{-1})^2}{c^2(1 - z^{-1})^2 + (1 + z^{-1})^2} \\
   H(z) &= \frac{1 + 2z^{-1} + z^{-2}}{c^2(1 - 2z^{-1} + z^{-2}) + (1 + 2z^{-1} + z^{-2})} \\
   \frac{Y(z)}{X(z)} &= \frac{1 + 2z^{-1} + z^{-2}}{(c^2 + 1) + (2 - 2c^2)z^{-1} + (c^2 + 1)z^{-2}} \\
   Y(z)& \cdot \left[ 1 + \frac{2 - 2c^2}{A}z^{-1} + z^{-2} \right]\\  &= X(z) \cdot \frac{1}{A} \left[ 1 + 2z^{-1} + z^{-2} \right]
   \end{align}
-
-5. \textbf{Difference Equation:} Converting from $z$-domain to discrete time $n$ (where $z^{-k} Y(z) \rightarrow y_{n-k}$):
-\begin{align} y[n] &= \underbrace{\frac{1}{A}(x[n] + 2x[n-1] + x[n-2])}_{\text{Input Terms (Source of Energy)}} \\&- \underbrace{\frac{2 - 2c^2}{A}y[n-1] - y[n-2]}_{\text{Feedback Terms (Oscillation)}} \end{align}
-   
+\item {Difference Equation:} Converting from $z$-domain to discrete time $n$ (where $z^{-k} Y(z) \rightarrow y_{n-k}$):
+\begin{align} 
+y[n] &= \underbrace{\frac{1}{A}(x[n] + 2x[n-1] + x[n-2])}_{\text{Input Terms (Source of Energy)}} \\&- \underbrace{\frac{2 - 2c^2}{A}y[n-1] - y[n-2]}_{\text{Feedback Terms (Oscillation)}} \end{align}
    Solving for the current term $y_n$ after the impulse has passed:
    $$ y_n = \frac{8 - 2h^2}{4 + h^2} y_{n-1} - y_{n-2} $$
-
-\subsubsection{Series Expansion Methods}
-Taylor/Maclaurin series can also be used for this purpose.
-\begin{itemize}
-  \item \begin{itemize}
-    \item \textbf{Drawbacks:} Precision cannot be acheived consistently as the number of terms needed vary with function and also with input value. As the input increases, convergence is slow, and number of terms needed to be stored in memory increases.
-\end{itemize}
-\end{itemize}
-
-
-\subsubsection{Second-Order Runge-Kutta Methods (RK2)}
-A step up in accuracy from Euler's method are the second-order Runge-Kutta (RK2) methods. These methods use a preliminary slope calculation to make a more accurate step.
-\begin{itemize}
-    \item \textbf{Heun's Method:} This method averages the slope at the beginning and end of the interval (using an Euler step as a predictor):
-    \begin{align*}
+\end{enumerate}
+\end{enumerate}
+\item {Series Expansion Methods:}
+Taylor/Maclaurin series can be used for this purpose.
+%\begin{itemize}
+%  \item \begin{itemize}
+%    \item \textbf{Drawbacks:} Precision cannot be acheived consistently as the number of terms needed vary with function and also with input value. As the input increases, convergence is slow, and number of terms needed to be stored in memory increases.
+%\end{itemize}
+%\end{itemize}
+\item {Second-Order Runge-Kutta Methods (RK2, Heun's Method):}
+%A step up in accuracy from Euler's method are the second-order Runge-Kutta (RK2) methods. These methods use a preliminary slope calculation to make a more accurate step.
+%\begin{itemize}
+%    \item \textbf This method averages the slope at the beginning and end of the interval (using an Euler step as a predictor):
+    \begin{align}
         \tilde{y}_{n+1} &= y_n + h \cdot f(x_n, y_n) \\
         y_{n+1} &= y_n + \tfrac{h}{2}(f(x_n, y_n) + f(x_{n+1}, \tilde{y}_{n+1}))
-    \end{align*}
-    \begin{itemize}
-      \item \textbf{Drawback:} The global error is $O(h^2)$. While this is a significant improvement over Euler's method, it is still much less accurate than the fourth-order RK4 method ($O(h^4)$). Given that RK4 only requires twice the number of function evaluations per step as these RK2 methods (four vs. two), the substantial gain in accuracy was judged as a highly favourable trade-off, as shown in Fig.\ref{fig:analysis}.
-\end{itemize}
-\end{itemize}
-
-\subsection{Justification for RK4 Selection}
-
-The fixed-step RK4 method was determined to be the optimal choice for this specific hardware implementation based on the following analysis (summarized in Table \ref{tab:accuracy_results}). The code for this analysis can be found at: \url{https://github.com/gadepall/calculator/tree/main/analysis}:
-
+    \end{align}
+%    \begin{itemize}
+%      \item \textbf{Drawback:} The global error is $O(h^2)$. While this is a significant improvement over Euler's method, it is still much less accurate than the fourth-order RK4 method ($O(h^4)$). Given that RK4 only requires twice the number of function evaluations per step as these RK2 methods (four vs. two), the substantial gain in accuracy was judged as a highly favourable trade-off, as shown in Fig.\ref{fig:analysis}.
+%\end{itemize}
+%\end{itemize}
+\end{enumerate}
+The fixed-step RK4 method was determined to be the optimal choice for this specific hardware implementation based on the following analysis (summarized in Table \ref{tab:accuracy_results}). The code for this analysis can be found at: \url{https://github.com/gadepall/calculator/tree/main/analysis}
+Here, each algorithm was compared against the gold-standard MPFR library up to 50 decimal places. Accuracy is represented using Units in Last Place (ULP) measure.
+\begin{equation}
+  \text{Error}_\text{ULP} = \frac{|y_\text{calc}-y_\text{true}|}{\epsilon\left(y_\text{true}\right)}
+\end{equation}
+As per the results in Fig.\ref{fig:analysis}, RK4 demonstrates a clear dominance, with both maximum and average errors being many orders of magnitude less than the other algorithms. The Euler methods demonstrate an increasing drift from the true value with increase in input value, while the trapezoidal method, while stable in its error variation, featured much more absolute error than RK4. As expected, RK2 showed similar error variation as RK4 but much greater in magnitude.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=\columnwidth]{figs/analysis.png}
 	\caption{Comparison of the accuracy of the algorithms}
 	\label{fig:analysis}
 \end{figure}
-Here, each algorithm was compared against the gold-standard MPFR library up to 50 decimal places. Accuracy is represented using \textbf{Units in Last Place (ULP)} measure.
-\begin{equation}
-  \text{Error}_\text{ULP} = \frac{|y_\text{calc}-y_\text{true}|}{\epsilon\left(y_\text{true}\right)}
-\end{equation}
-\par As per the results in Fig.\ref{fig:analysis}, RK4 demonstrates a clear dominance, with both maximum and average errors being many orders of magnitude less than the other algorithms. The Euler methods demonstrate an increasing drift from the true value with increase in input value, while the trapezoidal method, while stable in its error variation, featured much more absolute error than RK4. As expected, RK2 showed similar error variation as RK4 but much greater in magnitude.
 %\begin{enumerate}
 %    \item \textbf{Resource Constraints:} RK4 is a single-step method that requires storing only the current state $(x_n, y_n)$, making it memory efficient.    \item \textbf{Simplicity and Robustness:} The explicit formulas for RK4 (Appendix \ref{appendix:rk4}) are straightforward to implement in C. For the supported set of smooth functions (Table \ref{tab:supported}) , the $O(h^4)$ global error of RK4 provides sufficient precision for the 16$\times$2 LCD display  without the code complexity of advanced methods.
 %\end{enumerate}
@@ -760,6 +722,10 @@ Here, each algorithm was compared against the gold-standard MPFR library up to 5
         \bottomrule
     \end{tabularx}
 \end{table}
+%\subsection{Rejected Alternative Algorithms}
+
+%\subsection{Justification for RK4 Selection}
+
 %\begin{table}[H]
 %\centering
 %\caption{Comparison of Numerical Methods for Calculator Implementation}
