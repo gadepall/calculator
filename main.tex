@@ -801,6 +801,7 @@ python3 server.py\end{lstlisting}
 
 \subsection{Code Repository}
 The complete C implementations of the algorithms discussed in this paper are available at: \url{https://github.com/gadepall/calculator/tree/main/codes}. 
+\iffalse
 \begin{lstlisting}[basicstyle=\ttfamily, frame=single, caption={Repository structure in codes/}]
 codes
 |-- defines.h
@@ -818,7 +819,26 @@ codes
 |-- timer.c
 `-- timer.h
 \end{lstlisting}
+\fi
 
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabularx}{\columnwidth}{|l|X|}
+\hline
+\textbf{File Name} & \textbf{Description} \\ \hline
+\texttt{defines.h}  & Global constants and hardware pin mappings. \\ \hline
+\texttt{func.c/.h}  & RK4 solver and implementation of all functions. \\ \hline
+\texttt{gpio.c/.h}  & Interface for GPIO pin control. \\ \hline
+\texttt{keypad.c/.h} & Logic for initialising and reading keypad input. \\ \hline
+\texttt{lcd.c/.h}   & LCD driver for 16x2 LCD using HD44780 controller interface. \\ \hline
+\texttt{main.c}     & Entry point containing the system init and main loop, as well as handling key presses. \\ \hline
+\texttt{pars.c/.h}  & Parser module for processing input from user and returning output. \\ \hline
+\texttt{timer.c/.h} & Hardware timer configuration and interface. \\ \hline
+\end{tabularx}
+\caption{source code files present in codes/}
+\label{tab:file_org}
+\end{table}
 \bibliographystyle{IEEEtran}
 \bibliography{references}
 
