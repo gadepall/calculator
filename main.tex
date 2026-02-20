@@ -696,6 +696,8 @@ Here, each algorithm was compared against the gold-standard MPFR library up to 5
 \begin{equation}
   \text{Error}_\text{ULP} = \frac{|y_\text{calc}-y_\text{true}|}{\epsilon\left(y_\text{true}\right)}
 \end{equation}
+where $y_\text{calc}$ is the value of the function calculated by the algorithm being tested, $y_\text{true}$ is the value calculated by the MPFR library, and $\epsilon\left(y_\text{true}\right)$ is the minimum floating point difference representable on a computer between two numbers.
+
 As per the results in Fig.\ref{fig:analysis}, RK4 demonstrates a clear dominance, with both maximum and average errors being many orders of magnitude less than the other algorithms. The Euler methods demonstrate an increasing drift from the true value with increase in input value, while the trapezoidal method, while stable in its error variation, featured much more absolute error than RK4. As expected, RK2 showed similar error variation as RK4 but much greater in magnitude.
 \begin{figure}[H]
 	\centering
