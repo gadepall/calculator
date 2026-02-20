@@ -781,6 +781,9 @@ proot-distro login debian
     \begin{lstlisting}[language=bash]
 pio project init --board uno\end{lstlisting}
 \item Download the files in \url{https://github.com/gadepall/calculator/tree/main/codes} to \verb|src/|.
+\item In \verb|platformio.ini|, add the following flags at the end:
+  \begin{lstlisting}
+build_flags = -Wl,-u,vfprintf -lprintf_flt\end{lstlisting}
   \item Compile and upload.
     \begin{lstlisting}[language=bash]
 pio run -t upload\end{lstlisting}
