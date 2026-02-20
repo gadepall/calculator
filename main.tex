@@ -273,7 +273,7 @@ It relies on two structures
     \item An output queue for the final postfix expression
 \end{itemize}
 The Shunting Yard Algorithm, together with RPN evaluation, respects operator precedence, associativity, and bracket handling, making it a cornerstone in expression processing across computing applications.
-Instructions for installation of a software based prototype for testing the algorithms are given in Appendix~\ref{appendix:software}.
+Instructions for installation of a software based prototype for testing the algorithms are given in Appendix~\ref{appendix:app_setup}.
 
 \section{Calculator: Hardware Implementation}
 
@@ -772,53 +772,26 @@ proot-distro login debian
 \end{lstlisting}
 \fi
 \end{enumerate}
-\subsection{Platformio }
-\begin{enumerate}
-	\item Install Packages
-\begin{lstlisting}
-apt install avra avrdude gcc-avr avr-libc
-\end{lstlisting}
-\item Follow the instructions in \url{https://docs.platformio.org/en/stable/core/installation/methods/installer-script.html#super-quick-macos-linux} to install platformio.
-\item Execute the following on debian
-\begin{lstlisting}
-cd ide/piosetup/codes
-pio run
-\end{lstlisting}
-See Fig. \ref{fig:arduino} for the Arduino pin diagram.
-		\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.75\columnwidth]{figs/arduino.jpg}
-	\caption{Arduino Pinout}
-	\label{fig:arduino}
-\end{figure}
-
-\end{enumerate}
-\subsection{Arduino Droid}
-\begin{enumerate}
-\item Install ArduinoDroid from apkpure
-\item Open ArduinoDroid and grant all permissions
-\item Connect the Arduino to your phone via USB-OTG
-\item For flashing the bin files, in ArduinoDroid,
-\begin{lstlisting}
-Actions->Upload->Upload Precompiled
-\end{lstlisting}
-then go to your working directory and select
-\begin{lstlisting}
-.pio/build/uno/firmware.hex
-\end{lstlisting}
-for uploading hex file to the Arduino Uno
-\item The LED beside pin 13 will start
-blinking
-\end{enumerate}
 \fi
+\subsection{Hardware Upload}
+\begin{enumerate}
+  \item Install platformio and create a project in an empty directory
+    \begin{lstlisting}[language=bash]
+pio project init --board uno\end{lstlisting}
+\item Download the files in \url{https://github.com/gadepall/calculator/tree/main/codes} to \verb|src/|.
+  \item Compile and upload.
+    \begin{lstlisting}[language=bash]
+pio run -t upload\end{lstlisting}
+\end{enumerate}
 \subsection{App Upload}
+\label{appendix:app_setup}
 \begin{enumerate}
   \item Download the files present in \url{https://github.com/gadepall/calculator/tree/main/software}.
   \item Compile the C files:
     \begin{lstlisting}
 gcc -shared -o libcalc.so -fPIC func.c pars.c\end{lstlisting}
   \item Copy the app APK file \verb|calci.apk| to the phone Internal Storage and install it from the File Manager.
-  \item Run the server in \verb|proot-distro|:
+  \item Run the server in \verb|proot-distro| on Termux:
     \begin{lstlisting}
 python3 server.py\end{lstlisting}
   \item The app now functions as a scientific calculator.
