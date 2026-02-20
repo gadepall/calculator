@@ -18,9 +18,9 @@
   keywordstyle=\color{blue}\bfseries,
   commentstyle=\color{green!40!black},
   stringstyle=\color{red},
-  numbers=left,                     % keep numbers
-  numberstyle=\scriptsize\ttfamily, % more readable numbers
-  numbersep=8pt,                    % add spacing from code
+%  numbers=left,                     % keep numbers
+%  numberstyle=\scriptsize\ttfamily, % more readable numbers
+%  numbersep=8pt,                    % add spacing from code
   xleftmargin=1.5em,                % indent code so numbers don’t overlap
   frame=single,
   breaklines=true,
@@ -273,7 +273,7 @@ It relies on two structures
     \item An output queue for the final postfix expression
 \end{itemize}
 The Shunting Yard Algorithm, together with RPN evaluation, respects operator precedence, associativity, and bracket handling, making it a cornerstone in expression processing across computing applications.
-Instructions for installation of a software based prototype for testing the algorithms are given in Appendix~\ref{appendix:app_setup}.
+Instructions for installation of a software based prototype for testing the algorithms are given in Appendix~\ref{appendix:software}.  These instructions are for an Android phone running termux-debian in proot.
 
 \section{Calculator: Hardware Implementation}
 
@@ -285,6 +285,9 @@ Tables
 and
 \ref{tab:mode2}.
 The schematic for circuit connections is available in 
+\figref{fig:circuit_schematic} and the instructions for uploading the codes are available in 
+\appref{app:hardware}
+.
 \subsection{Button Matrix}
 The button matrix is a grid of push-buttons arranged in rows and columns. It allows multiple buttons to be connected to the microcontroller using fewer pins.
 %\textbf{Working Principle:}
@@ -561,12 +564,12 @@ Col 5 & A4 \\
 
 \label{fig:my_label}
 \end{figure}
-\subsection{Circuit Schematic}
-The schematic for circuit connections is shown below,
+%\subsection{Circuit Schematic}
+%The schematic for circuit connections is shown below,
 \begin{figure*}[htbp]
     \centering
-    \includegraphics[width=0.8\textwidth]{figs/schematic.jpg}
-    \caption{Schematic of Circuit}
+    \includegraphics[width=\textwidth]{figs/schematic.jpg}
+    \caption{Schematic of Scientific Calculator}
     \label{fig:circuit_schematic}
 \end{figure*}
 
@@ -748,6 +751,20 @@ As per the results in Fig.\ref{fig:analysis}, RK4 demonstrates a clear dominance
 
 \section{Software Setup}
 \label{appendix:software}
+%\subsection{App Upload}
+%\label{appendix:app_setup}
+\begin{enumerate}
+  \item Download the files present in \url{https://github.com/gadepall/calculator/tree/main/software}.
+  \item Compile the C files:
+    \begin{lstlisting}
+gcc -shared -o libcalc.so -fPIC func.c pars.c\end{lstlisting}
+  \item Copy the app APK file \verb|calci.apk| to the phone Internal Storage and install it from the File Manager.
+  \item Run the server in \verb|termux-debian| 
+    \begin{lstlisting}
+python3 server.py\end{lstlisting}
+  \item The app now functions as a scientific calculator.
+\end{enumerate}
+
 \iffalse
 \subsection{Termux}
 \begin{enumerate}
@@ -775,7 +792,8 @@ proot-distro login debian
 \fi
 \end{enumerate}
 \fi
-\subsection{Hardware Upload}
+\section{Hardware Upload}
+\label{app:hardware}
 \begin{enumerate}
   \item Install platformio and create a project in an empty directory
     \begin{lstlisting}[language=bash]
@@ -788,22 +806,10 @@ build_flags = -Wl,-u,vfprintf -lprintf_flt\end{lstlisting}
     \begin{lstlisting}[language=bash]
 pio run -t upload\end{lstlisting}
 \end{enumerate}
-\subsection{App Upload}
-\label{appendix:app_setup}
-\begin{enumerate}
-  \item Download the files present in \url{https://github.com/gadepall/calculator/tree/main/software}.
-  \item Compile the C files:
-    \begin{lstlisting}
-gcc -shared -o libcalc.so -fPIC func.c pars.c\end{lstlisting}
-  \item Copy the app APK file \verb|calci.apk| to the phone Internal Storage and install it from the File Manager.
-  \item Run the server in \verb|proot-distro| on Termux:
-    \begin{lstlisting}
-python3 server.py\end{lstlisting}
-  \item The app now functions as a scientific calculator.
-\end{enumerate}
-
-\subsection{Code Repository}
-The complete C implementations of the algorithms discussed in this paper are available at: \url{https://github.com/gadepall/calculator/tree/main/codes}. 
+%\subsection{Code Repository}
+\tabref{tab:file_org}
+describes the various hardware source codes.
+%The complete C implementations of the algorithms discussed in this paper are available at: \url{https://github.com/gadepall/calculator/tree/main/codes}. 
 \iffalse
 \begin{lstlisting}[basicstyle=\ttfamily, frame=single, caption={Repository structure in codes/}]
 codes
@@ -839,7 +845,7 @@ codes
 \texttt{pars.c/.h}  & Parser module for processing input from user and returning output. \\ \hline
 \texttt{timer.c/.h} & Hardware timer configuration and interface. \\ \hline
 \end{tabularx}
-\caption{source code files present in codes/}
+\caption{Hardware source code description}
 \label{tab:file_org}
 \end{table}
 \bibliographystyle{IEEEtran}
