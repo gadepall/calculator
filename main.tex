@@ -78,9 +78,9 @@ More advanced structural equations and orthogonal collocation methods offer low 
 A fixed-step RK4 approach is superior for predictable performance under the constraints discussed in this work, ensuring that calculations complete reliably within strict sampling windows, such as those in robotics or flight controllers \cite{Murugesan2002}.
 Further,  the single-step nature of RK4 is more suitable for limited microcontrollers as it avoids the RAM overhead of managing past solution data.
 
-Despite extensive research into specialized hardware like FPGAs or complex applications such as GPS orbit computation and motor control, there is a lack of a mathematically unified framework for general scientific computing on 8-bit platforms \cite{DeMicco2011, Medjahed2024, AkpunarBozkurt2026}. Most related works treat different transcendental functions as separate implementation problems rather than a single unified mathematical structure \cite{Moroz2023}. 
+Despite extensive research into specialized hardware like FPGAs or complex applications such as GPS orbit computation and motor control, there is a lack of a unified framework for general scientific computing on constrained 8-bit platforms \cite{DeMicco2011, Medjahed2024, AkpunarBozkurt2026}. Most related works in embedded systems treat different transcendental functions as separate implementation problems rather than a single unified mathematical structure \cite{Moroz2023}. 
 
-This work bridges that gap by reformulating diverse scientific functions into high school-level ODEs, providing a robust, high-precision, and conceptually accessible framework for relatively limited microcontrollers.   The proposed algorithms are then validated by implementing a scientific calculator using the ATMEGA328P.
+This work bridges that gap by demonstrating how a numerical computing concept, the reformulation of diverse scientific functions into high school-level ODEs, can be used as a unified, fixed-step software architecture. This provides a robust, high-precision, and conceptually accessible pedagogical and practical framework for relatively limited microcontrollers. The proposed algorithms are then validated by implementing a scientific calculator using the ATMEGA328P.
 
 \section{Calculator: Software Implementation}
 
@@ -165,10 +165,18 @@ y_{n+1} &= y_n+\tfrac{1}{6}
 		 &\quad \rbrak{+2k_3+k_4} & &\quad \rbrak{+2l_3+l_4}
 \end{aligned}
 \end{align}
-where $ k_1,k_2,k_3,k_4 $ correspond to the RK-4 terms of the equation $ \frac{dy}{dx}=z $ and $ l_1,l_2,l_3,l_4 $ corresponds to the RK-4 terms of the equation $ \frac{dz}{dx}=-y $.
-    The remaining functions in \tabref{tab:diff_eqns_ic} are computed using a similar approach
-in \tabref{tab:rk4_single}.
-The other functions/constants are computed using \cite{ncert12}
+where $ k_1,k_2,k_3,k_4 $ correspond to the RK-4 terms of the equation $ \frac{dy}{dx}=z $ and $ l_1,l_2,l_3,l_4 $ corresponds to the RK-4 terms of the equation $ \frac{dz}{dx}=-y $. To clarify how first-order differential equations are solved using RK4, the example of the natural logarithm can be taken:
+\begin{align}
+  \frac{dy}{dx}=\frac{1}{x}, \quad y(1)=0
+\end{align}
+The RK4 update equation is obtained through simple algebraic substitution:  
+\begin{align}
+  k_{1} &= h \cdot f(x_{n}, y_{n}) = \frac{h}{x_{n}} \\
+  k_{2} &= h \cdot f\left(x_{n} + \frac{h}{2}, y_{n} + \frac{k_{1}}{2}\right) = \frac{h}{x_{n} + \frac{h}{2}} \\
+  k_{3} &= h \cdot f\left(x_{n} + \frac{h}{2}, y_{n} + \frac{k_{2}}{2}\right) = \frac{h}{x_{n} + \frac{h}{2}} \\
+  k_{4} &= h \cdot f(x_{n} + h, y_{n} + k_{3}) = \frac{h}{x_{n} + h}
+\end{align}
+The remaining functions in \tabref{tab:diff_eqns_ic} are computed using a similar approach in \tabref{tab:rk4_single}. The other functions/constants are computed using \cite{ncert12}
 \begin{align}
 \begin{split}
 %\begin{aligned}
@@ -656,7 +664,7 @@ y_{n+1} = y_n + \frac{h}{2}\cdot(f(x_n, y_n) + f(x_{n+1}, y_{n+1}))
 \begin{equation}
  s^2 Y(s) + Y(s) = 1 \implies Y(s) = H(s) = \frac{1}{s^2+1}
 \end{equation}
-\item {Bilinear Substitution:} Apply the Bilinear transform substitution $s \approx \frac{2}{h} \frac{1 - z^{-1}}{1 + z^{-1}}$, where $h$ is the step:
+\item {Bilinear Substitution:} Apply the Bilinear transform substitution $s \approx \frac{2}{h} \frac{1 - z^{-1}}{1 + z^{-1}}$, where $h$ is the step, to convert the continuous time transfer function into a discrete time equivalent:
 \begin{equation}
   H(z) = \frac{1}{\left[ \left( \frac{2}{h} \frac{1 - z^{-1}}{1 + z^{-1}} \right)^2 + 1 \right]} 
 \end{equation}
@@ -667,7 +675,7 @@ y_{n+1} = y_n + \frac{h}{2}\cdot(f(x_n, y_n) + f(x_{n+1}, y_{n+1}))
   \frac{Y(z)}{X(z)} &= \frac{1 + 2z^{-1} + z^{-2}}{(c^2 + 1) + (2 - 2c^2)z^{-1} + (c^2 + 1)z^{-2}} \\
   Y(z)& \cdot \left[ 1 + \frac{2 - 2c^2}{A}z^{-1} + z^{-2} \right]\\  &= X(z) \cdot \frac{1}{A} \left[ 1 + 2z^{-1} + z^{-2} \right]
   \end{align}
-\item {Difference Equation:} Converting from $z$-domain to discrete time $n$ (where $z^{-k} Y(z) \rightarrow y_{n-k}$):
+\item {Difference Equation:} Converting from $z$-domain to discrete time $n$ (where $z^{-k} Y(z) \rightarrow y_{n-k}$ as per inverse Z-transform):
 \begin{align} 
 y[n] &= \underbrace{\frac{1}{A}(x[n] + 2x[n-1] + x[n-2])}_{\text{Input Terms (Source of Energy)}} \\&- \underbrace{\frac{2 - 2c^2}{A}y[n-1] - y[n-2]}_{\text{Feedback Terms (Oscillation)}} \end{align}
    Solving for the current term $y_n$ after the impulse has passed:
