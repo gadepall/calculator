@@ -25,6 +25,7 @@ env/
 dist/
 build/
 *.egg-info/
+.python-version
 
 ### --- C / C++ --- ###
 *.o
@@ -37,6 +38,7 @@ build/
 *.a
 *.la
 *.lo
+*.elf 
 
 *.exe
 *.out
