@@ -4,8 +4,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 mp.mp.dps = 50
-N = 100
-END = 6.3
+N = 318
+END = 20
 
 def get_err(est, ref):
     ref = float(ref)
@@ -143,7 +143,7 @@ plt.grid(True, which="both", ls="-", alpha=0.2)
 plt.legend(fontsize=10)
 plt.tight_layout()
 
-plt.savefig('../figs/analysis.png', dpi=300)
+plt.savefig('../figs/analysis2.png', dpi=300)
 print("Plot saved")
 df = pd.DataFrame(data_stats).sort_values('Max Error (ULP)')
 print("\nAccuracy Statistics:")

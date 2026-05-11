@@ -325,32 +325,6 @@ This reduces the number of pins required to implement a calculator with 25 butto
 \bottomrule
 \end{tabularx}
 \end{table}
-\begin{table}[H]
-\centering
-\caption{Arduino to LCD pin connections}
-\label{tab:arduino-lcd}
-\renewcommand{\arraystretch}{1.2}
-\resizebox{\columnwidth}{!}{%
-\begin{tabular}{llll}
-\toprule
-\textbf{Arduino Pin} & \textbf{LCD Pin} & \textbf{LCD Label} & \textbf{Description} \\
-\midrule
-GND  & 1  & GND   & Ground \\
-5V   & 2  & Vcc   & Power Supply \\
-GND  & 3  & Vee   & Contrast Control \\
-D2   & 4  & RS    & Register Select \\
-GND  & 5  & R/W   & Read/Write (fixed to Write) \\
-D3   & 6  & EN    & Enable \\
-D4   & 11 & DB4   & Data Bus (4-bit mode) \\
-D5   & 12 & DB5   & Data Bus (4-bit mode) \\
-D6   & 13 & DB6   & Data Bus (4-bit mode) \\
-D7   & 14 & DB7   & Data Bus (4-bit mode) \\
-5V   & 15 & LED+  & Backlight Anode \\
-GND  & 16 & LED-  & Backlight Cathode \\
-\bottomrule
-\end{tabular}%
-}
-\end{table}
 
 
 \begin{table}[h!]\centering
@@ -390,6 +364,34 @@ Row 5  & Backspace & . & = & Mode shift& $\pi$ \\
 }
 \label{tab:mode2}
 \end{table}
+
+\begin{table}[h!]
+\centering
+\caption{Arduino to LCD pin connections}
+\label{tab:arduino-lcd}
+\renewcommand{\arraystretch}{1.2}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{llll}
+\toprule
+\textbf{Arduino Pin} & \textbf{LCD Pin} & \textbf{LCD Label} & \textbf{Description} \\
+\midrule
+GND  & 1  & GND   & Ground \\
+5V   & 2  & Vcc   & Power Supply \\
+GND  & 3  & Vee   & Contrast Control \\
+D2   & 4  & RS    & Register Select \\
+GND  & 5  & R/W   & Read/Write (fixed to Write) \\
+D3   & 6  & EN    & Enable \\
+D4   & 11 & DB4   & Data Bus (4-bit mode) \\
+D5   & 12 & DB5   & Data Bus (4-bit mode) \\
+D6   & 13 & DB6   & Data Bus (4-bit mode) \\
+D7   & 14 & DB7   & Data Bus (4-bit mode) \\
+5V   & 15 & LED+  & Backlight Anode \\
+GND  & 16 & LED-  & Backlight Cathode \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
 \begin{table}[H]
 \centering
 \caption{Keypad row/column connections to Arduino pins}
@@ -581,6 +583,25 @@ Col 5 & A4 \\
     \label{fig:circuit_schematic}
 \end{figure*}
 
+\section{Limitations and Hardware Analysis}
+
+text here
+
+\begin{table}[H]
+    \centering
+    \caption{Hardware Performance Analysis}
+    \label{tab:hardware_results}
+    \begin{tabularx}{\columnwidth}{X X X X}
+        \toprule
+        \textbf{Algorithm} & \textbf{Flash (Bytes)} & \textbf{SRAM (Bytes)} & \textbf{Execution Time} \\
+        \midrule
+        RK4 & $1392$ & $16$ & High\\
+        Trapezoidal & $1472$ & $16$ & High\\
+        Forward Euler & $1272$ & $16$ & Unstable\\
+        Backward Euler & $1296$ & $16$ & Unstable\\
+        \bottomrule
+    \end{tabularx}
+\end{table}
 
 %\subsection{Hardware Circuit}
 %The hardware circuit of calculator,
@@ -735,6 +756,16 @@ As per the results in Fig.\ref{fig:analysis}, RK4 demonstrates a clear dominance
         \bottomrule
     \end{tabularx}
 \end{table}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\columnwidth]{figs/analysis4.png}
+	\caption{Accuracy versus step size}
+	\label{fig:analysis2}
+\end{figure}
+
+\figref{fig:analysis2} shows an analysis of the variation of error with decrease in step size. While the initial parts of the graph show error as expected from \figref{fig:analysis}, this plot provides insight into the limitations of the hardware. On 8-bit architectures like on the ATMEGA328P, there is no hardware Floating Point Unit, thus floating point operations are emulated in software. As part of this \verb|avr-gcc| treats \verb|float| and \verb|double| as 32 bit floats. Thus, for RK4, it is seen that there is an error minima occurring at around $h = 0.03$. Using a step size smaller than $0.03$ only increases computation time. Also, since RK4 attains its error minima at a relatively high $h$ value, there is no practical use in implementing anything higher than a 4th order algorithm, as the hardware precision floor is the bottleneck. This further cements the objective suitability of RK4 for this purpose.
+
 %\subsection{Rejected Alternative Algorithms}
 
 %\subsection{Justification for RK4 Selection}
