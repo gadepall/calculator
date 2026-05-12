@@ -13,6 +13,7 @@
 \usepackage{circuitikz}
 \usepackage{hyperref}
 \usepackage{tabularx}
+\newcommand{\rev}[1]{{\color{blue}#1}}
 \lstset{
   basicstyle=\ttfamily\small,
   keywordstyle=\color{blue}\bfseries,
@@ -36,8 +37,8 @@
 \author{
 \IEEEauthorblockN{Subhodeep Chakraborty, Krishna Patil, Nara Prajwal  and  G.V.V. Sharma}
 \IEEEauthorblockA{
-Department of Electrical Engineering\\
-IIT Hyderabad\\
+  \textit{Department of Electrical Engineering}\\
+  \textit{IIT Hyderabad}\\
 Email: gadepall@ee.iith.ac.in}
 }
 \begin{document}
@@ -78,9 +79,9 @@ More advanced structural equations and orthogonal collocation methods offer low 
 A fixed-step RK4 approach is superior for predictable performance under the constraints discussed in this work, ensuring that calculations complete reliably within strict sampling windows, such as those in robotics or flight controllers \cite{Murugesan2002}.
 Further,  the single-step nature of RK4 is more suitable for limited microcontrollers as it avoids the RAM overhead of managing past solution data.
 
-Despite extensive research into specialized hardware like FPGAs or complex applications such as GPS orbit computation and motor control, there is a lack of a unified framework for general scientific computing on constrained 8-bit platforms \cite{DeMicco2011, Medjahed2024, AkpunarBozkurt2026}. Most related works in embedded systems treat different transcendental functions as separate implementation problems rather than a single unified mathematical structure \cite{Moroz2023}. 
+Despite extensive research into specialized hardware like FPGAs or complex applications such as GPS orbit computation and motor control, \rev{there is a lack of a unified framework for general scientific computing on constrained 8-bit platforms} \cite{DeMicco2011, Medjahed2024, AkpunarBozkurt2026}. Most related works in embedded systems treat different transcendental functions as separate implementation problems rather than a single unified mathematical structure \cite{Moroz2023}. 
 
-This work bridges that gap by demonstrating how a numerical computing concept, the reformulation of diverse scientific functions into high school-level ODEs, can be used as a unified, fixed-step software architecture. This provides a robust, high-precision, and conceptually accessible pedagogical and practical framework for relatively limited microcontrollers. The proposed algorithms are then validated by implementing a scientific calculator using the ATMEGA328P.
+\rev{This work bridges that gap by demonstrating how a numerical computing concept, the reformulation of diverse scientific functions into high school-level ODEs, can be used as a unified, fixed-step software architecture. This provides a robust, high-precision, and conceptually accessible pedagogical and practical framework for relatively limited microcontrollers. The proposed algorithms are then validated by implementing a scientific calculator using the ATMEGA328P.}
 
 \section{Calculator: Software Implementation}
 
@@ -165,16 +166,18 @@ y_{n+1} &= y_n+\tfrac{1}{6}
 		 &\quad \rbrak{+2k_3+k_4} & &\quad \rbrak{+2l_3+l_4}
 \end{aligned}
 \end{align}
-where $ k_1,k_2,k_3,k_4 $ correspond to the RK-4 terms of the equation $ \frac{dy}{dx}=z $ and $ l_1,l_2,l_3,l_4 $ corresponds to the RK-4 terms of the equation $ \frac{dz}{dx}=-y $. To clarify how first-order differential equations are solved using RK4, the example of the natural logarithm can be taken:
+where $ k_1,k_2,k_3,k_4 $ correspond to the RK-4 terms of the equation $ \frac{dy}{dx}=z $ and $ l_1,l_2,l_3,l_4 $ corresponds to the RK-4 terms of the equation $ \frac{dz}{dx}=-y $. \rev{To clarify how first-order differential equations are solved using RK4, the example of the natural logarithm can be taken:}
 \begin{align}
+  \rev{
   \frac{dy}{dx}=\frac{1}{x}, \quad y(1)=0
+}
 \end{align}
-The RK4 update equation is obtained through simple algebraic substitution:  
+\rev{The RK4 update equation is obtained through simple algebraic substitution:}  
 \begin{align}
-  k_{1} &= h \cdot f(x_{n}, y_{n}) = \frac{h}{x_{n}} \\
-  k_{2} &= h \cdot f\left(x_{n} + \frac{h}{2}, y_{n} + \frac{k_{1}}{2}\right) = \frac{h}{x_{n} + \frac{h}{2}} \\
-  k_{3} &= h \cdot f\left(x_{n} + \frac{h}{2}, y_{n} + \frac{k_{2}}{2}\right) = \frac{h}{x_{n} + \frac{h}{2}} \\
-  k_{4} &= h \cdot f(x_{n} + h, y_{n} + k_{3}) = \frac{h}{x_{n} + h}
+  \rev{k_{1}} &\rev{= h \cdot f(x_{n}, y_{n}) = \frac{h}{x_{n}}} \\
+  \rev{k_{2}} &\rev{= h \cdot f\left(x_{n} + \frac{h}{2}, y_{n} + \frac{k_{1}}{2}\right) = \frac{h}{x_{n} + \frac{h}{2}}} \\
+  \rev{k_{3}} &\rev{= h \cdot f\left(x_{n} + \frac{h}{2}, y_{n} + \frac{k_{2}}{2}\right) = \frac{h}{x_{n} + \frac{h}{2}}} \\
+  \rev{k_{4}} &\rev{= h \cdot f(x_{n} + h, y_{n} + k_{3}) = \frac{h}{x_{n} + h}}
 \end{align}
 The remaining functions in \tabref{tab:diff_eqns_ic} are computed using a similar approach in \tabref{tab:rk4_single}. The other functions/constants are computed using \cite{ncert12}
 \begin{align}
@@ -583,19 +586,19 @@ Col 5 & A4 \\
     \label{fig:circuit_schematic}
 \end{figure*}
 
-\section{Limitations and Hardware Analysis}
-
+\section{\rev{Limitations and Hardware Analysis}}
+\rev{
 \tabref{tab:hardware_results} details the hardware analysed using codes in \appref{app:codes}.
 While the RK4 method has a higher execution time, this trade-off results in reaching the precision floor of the ATMEGA328P. Also, the complete scientific calculator application using RK4 fits in only 12.3 KB of Flash and 350 bytes of RAM, leaving comfortable overhead for additional peripherals or more complex systems.
 
 There were also some limitations due to the hardware that could not be overcome.
 Lack of a hardware Floating Point Unit required software emulation, adding significant overhead. A single float division costed 505 cycles, more than twice the amount needed for an integer division. This results in inflation in latency per function and a hard precision floor that cannot be overcome with software (see \appref{app:new_anal}).
 \par Due to the above reasons, a fixed-step approach had to be used, but this results in both higher latency and error. At the precision floor however, the accuracy is maximised at the cost of latency.
-
+}
 
 \begin{table}[H]
     \centering
-    \caption{Hardware Performance Analysis}
+    \caption{\rev{Hardware Performance Analysis}}
     \label{tab:hardware_results}
     \begin{tabularx}{\columnwidth}{X X X X}
         \toprule
@@ -691,7 +694,7 @@ y_{n+1} = y_n + \frac{h}{2}\cdot(f(x_n, y_n) + f(x_{n+1}, y_{n+1}))
 \begin{equation}
  s^2 Y(s) + Y(s) = 1 \implies Y(s) = H(s) = \frac{1}{s^2+1}
 \end{equation}
-\item {Bilinear Substitution:} Apply the Bilinear transform substitution $s \approx \frac{2}{h} \frac{1 - z^{-1}}{1 + z^{-1}}$, where $h$ is the step, to convert the continuous time transfer function into a discrete time equivalent:
+\item {Bilinear Substitution:} Apply the Bilinear transform substitution $s \approx \frac{2}{h} \frac{1 - z^{-1}}{1 + z^{-1}}$, where $h$ is the step\rev{, to convert the continuous time transfer function into a discrete time equivalent}:
 \begin{equation}
   H(z) = \frac{1}{\left[ \left( \frac{2}{h} \frac{1 - z^{-1}}{1 + z^{-1}} \right)^2 + 1 \right]} 
 \end{equation}
@@ -702,7 +705,7 @@ y_{n+1} = y_n + \frac{h}{2}\cdot(f(x_n, y_n) + f(x_{n+1}, y_{n+1}))
   \frac{Y(z)}{X(z)} &= \frac{1 + 2z^{-1} + z^{-2}}{(c^2 + 1) + (2 - 2c^2)z^{-1} + (c^2 + 1)z^{-2}} \\
   Y(z)& \cdot \left[ 1 + \frac{2 - 2c^2}{A}z^{-1} + z^{-2} \right]\\  &= X(z) \cdot \frac{1}{A} \left[ 1 + 2z^{-1} + z^{-2} \right]
   \end{align}
-\item {Difference Equation:} Converting from $z$-domain to discrete time $n$ (where $z^{-k} Y(z) \rightarrow y_{n-k}$ as per inverse Z-transform):
+\item {Difference Equation:} Converting from $z$-domain to discrete time $n$ (where $z^{-k} Y(z) \rightarrow y_{n-k}$ \rev{ as per inverse Z-transform}):
 \begin{align} 
 y[n] &= \underbrace{\frac{1}{A}(x[n] + 2x[n-1] + x[n-2])}_{\text{Input Terms (Source of Energy)}} \\&- \underbrace{\frac{2 - 2c^2}{A}y[n-1] - y[n-2]}_{\text{Feedback Terms (Oscillation)}} \end{align}
    Solving for the current term $y_n$ after the impulse has passed:
@@ -767,11 +770,13 @@ As per the results in Fig.\ref{fig:analysis}, RK4 demonstrates a clear dominance
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=\columnwidth]{figs/analysis4.png}
-	\caption{Accuracy versus step size}
+    \caption{\rev{Accuracy versus step size}}
 	\label{fig:analysis2}
 \end{figure}
 \label{app:new_anal}
-\figref{fig:analysis2} shows an analysis of the variation of error with decrease in step size. While the initial parts of the graph show error as expected from \figref{fig:analysis}, this plot provides insight into the limitations of the hardware. On 8-bit architectures like on the ATMEGA328P, there is no hardware Floating Point Unit, thus floating point operations are emulated in software. As part of this \verb|avr-gcc| treats \verb|float| and \verb|double| as 32 bit floats. Thus, for RK4, it is seen that there is an error minima occurring at around $h = 0.03$. Using a step size smaller than $0.03$ only increases computation time. Also, since RK4 attains its error minima at a relatively high $h$ value, there is no practical use in implementing anything higher than a 4th order algorithm, as the hardware precision floor is the bottleneck. This further cements the objective suitability of RK4 for this purpose.
+\rev{
+  \figref{fig:analysis2} shows an analysis of the variation of error with decrease in step size. While the initial parts of the graph show error as expected from \figref{fig:analysis}, this plot provides insight into the limitations of the hardware. On 8-bit architectures like on the ATMEGA328P, there is no hardware Floating Point Unit, thus floating point operations are emulated in software. As part of this \texttt{avr-gcc} treats \texttt{float} and \texttt{double} as 32 bit floats. Thus, for RK4, it is seen that there is an error minima occurring at around $h = 0.03$. Using a step size smaller than $0.03$ only increases computation time. Also, since RK4 attains its error minima at a relatively high $h$ value, there is no practical use in implementing anything higher than a 4th order algorithm, as the hardware precision floor is the bottleneck. This further cements the objective suitability of RK4 for this purpose.
+}
 
 %\subsection{Rejected Alternative Algorithms}
 
