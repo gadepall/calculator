@@ -10,6 +10,7 @@
 \usepackage{float}
 \usepackage{booktabs}
 \usepackage{url}
+\usepackage{flushend}
 \usepackage{circuitikz}
 \usepackage{hyperref}
 \usepackage{tabularx}
@@ -58,7 +59,7 @@ Scientific Calculator, Microcontroller, Runge-Kutta Method, Quake III Algorithm,
 %Microcontrollers often find application as the bridge between physical systems and discrete digital logic. This can be as control systems for robotic applications or state estimation for autonomous navigation, among many other applications.\cite{AkpunarBozkurt2026} Thus, 
 Physical systems are typically modeled as a system of ordinary differential equations (ODE) where the rate of change of a state variable $y$ is a function of time $t$ and the state itself: $\frac{dy}{dt} = f(t,y)$, given an initial condition $y(t_0) = y_0$. 
 Most physical systems are now being implemented on digital platforms.
-This requires the design and implementation of algorithms capable of approximating complex functions under tight resource constraints. With respect to the ubiquity of differential equations as descriptors of real-world systems, the algorithms under the lens are those that perform or approximate numerical integration \cite{Udoh2025}.
+This requires the design and implementation of algorithms capable of approximating complex functions under tight resource constraints. With respect to the ubiquity of differential equations as descriptors of real-world systems, the algorithms under the lens are those that perform or approximate numerical integration \cite{parker2021}.
 
 %The numerical solution involves advancing the state from a known time $t_n$ to a future time $t_{n+1}$ separated by a step size h. The accuracy of this transition is mathematically governed by the Taylor series expansion. Numerical methods differ in how many terms of the expansion of the true solution $y(t+h)$ they capture.\cite{Udoh2025}
 %  An important aspect of digitising physical systems is the solving of differential equations.  
@@ -70,16 +71,16 @@ Numerical methods for function approximation on hardware often prioritize either
 is the simplest to program, yet its first-order accuracy ($O(h)$) leads to significant numerical drift and instability unless excessively small step sizes are used. Second-order Runge-Kutta (RK2) methods improve precision but still feature much greater absolute error magnitudes than RK4 \cite{ahmad2015}.
 %[Appendix~\ref{appendix:comparison}]
 
-Alternative approximation strategies such as Taylor series or Maclaurin expansions are geometrically intuitive but often impractical for embedded systems \cite{gadisa2017}.  This is because these methods require either the tedious recursive calculation of high-order derivatives, which are computationally expensive to evaluate, or for the coefficients for each function to be pre-stored, which results in memory usage piling up quickly for acceptable accuracy \cite{parker2021}. Also, the number of terms, and thus calculations needed for convergence, are much higher for Taylor series as compared to RK4 for the same accuracy \cite{Noar2024}. In contrast, the RK4 framework achieves high-order accuracy without needing derivatives, instead evaluating the function at four strategically chosen intermediate points. This allows for a more robust and maintainable implementation when derivatives are complex or unavailable \cite{Murugesan2002}.
+Alternative approximation strategies such as Taylor series or Maclaurin expansions are geometrically intuitive but often impractical for embedded systems \cite{Murugesan2002}.  This is because these methods require either the tedious recursive calculation of high-order derivatives, which are computationally expensive to evaluate, or for the coefficients for each function to be pre-stored, which results in memory usage piling up quickly for acceptable accuracy \cite{parker2021}. Also, the number of terms, and thus calculations needed for convergence, are much higher for Taylor series as compared to RK4 for the same accuracy \cite{Noar2024}. In contrast, the RK4 framework achieves high-order accuracy without needing derivatives, instead evaluating the function at four strategically chosen intermediate points. This allows for a more robust and maintainable implementation when derivatives are complex or unavailable \cite{Murugesan2002}.
 
-For specific transcendental functions, the CORDIC algorithm is highly efficient as it uses simple shift-and-add operations instead of multiplications \cite{Eklund2001}. However, CORDIC is limited by specific convergence ranges and requires different recursive sequences for different classes of functions \cite{st_cordic_an5325}. Linear multistep methods like Adams-Bashforth can reduce function evaluations but are not self-starting and necessitate a queue of past history to be stored that increases memory usage \cite{Gupta1985}. 
+For specific transcendental functions, the CORDIC algorithm is highly efficient as it uses simple shift-and-add operations instead of multiplications. However, CORDIC is limited by specific convergence ranges and requires different recursive sequences for different classes of functions \cite{st_cordic_an5325}. Linear multistep methods like Adams-Bashforth can reduce function evaluations but are not self-starting and necessitate a queue of past history to be stored that increases memory usage \cite{grewal2014}. 
 
 More advanced structural equations and orthogonal collocation methods offer low levels of error but frequently involve complex and heavy computations or iterative non-linear solvers \cite{allamaa2023}. Similarly, adaptive methods like ode45 (used in MATLAB) provide excellent accuracy but introduce variable execution times that can cause unacceptable jitter in real-time environments, such as the those mentioned above \cite{AkpunarBozkurt2026}. 
 
 A fixed-step RK4 approach is superior for predictable performance under the constraints discussed in this work, ensuring that calculations complete reliably within strict sampling windows, such as those in robotics or flight controllers \cite{Murugesan2002}.
 Further,  the single-step nature of RK4 is more suitable for limited microcontrollers as it avoids the RAM overhead of managing past solution data.
 
-Despite extensive research into specialized hardware like FPGAs or complex applications such as GPS orbit computation and motor control, \rev{there is a lack of a unified framework for general scientific computing on constrained 8-bit platforms} \cite{DeMicco2011, Medjahed2024, AkpunarBozkurt2026}. Most related works in embedded systems treat different transcendental functions as separate implementation problems rather than a single unified mathematical structure \cite{Moroz2023}. 
+Despite extensive research into specialized hardware like FPGAs or complex applications such as GPS orbit computation and motor control, \rev{there is a lack of a unified framework for general scientific computing on constrained 8-bit platforms} \cite{Medjahed2024, AkpunarBozkurt2026}. Most related works in embedded systems treat different transcendental functions as separate implementation problems rather than a single unified mathematical structure \cite{Moroz2023}. 
 
 \rev{This work bridges that gap by demonstrating how a numerical computing concept, the reformulation of diverse scientific functions into high school-level ODEs, can be used as a unified, fixed-step software architecture. This provides a robust, high-precision, and conceptually accessible pedagogical and practical framework for relatively limited microcontrollers. The proposed algorithms are then validated by implementing a scientific calculator using the ATMEGA328P.}
 
@@ -276,7 +277,7 @@ $y_n+\tfrac{1}{6}(k_1+2k_2+2k_3+k_4)$ \\
 
 \subsection{Expression Parsing}
 
-The Shunting Yard algorithm \cite{dijkstra1961} is employed for converting infix expressions into postfix form (Reverse Polish Notation, RPN \cite{kernighan1988})  for evaluation.
+The Shunting Yard algorithm \cite{dijkstra1961} is employed for converting infix expressions into postfix form (Reverse Polish Notation, RPN \cite{dijkstra1961})  for evaluation.
 %The \textbf{Shunting Yard Algorithm}, proposed by Edsger Dijkstra, is a method for converting mathematical expressions in infix notation into postfix notation 
 It relies on two structures
 \begin{itemize}
