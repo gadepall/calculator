@@ -585,7 +585,13 @@ Col 5 & A4 \\
 
 \section{Limitations and Hardware Analysis}
 
-As shown in \tabref{tab:hardware_results}, while RK4 does have higher execution times, this is compensated by its performance reaching the hardware peak allowed on the 8 bit microcontroller environment as in \figref{fig:analysis2}.
+\tabref{tab:hardware_results} details the hardware analysed using codes in \appref{app:codes}.
+While the RK4 method has a higher execution time, this trade-off results in reaching the precision floor of the ATMEGA328P. Also, the complete scientific calculator application using RK4 fits in only 12.3 KB of Flash and 350 bytes of RAM, leaving comfortable overhead for additional peripherals or more complex systems.
+
+There were also some limitations due to the hardware that could not be overcome.
+Lack of a hardware Floating Point Unit required software emulation, adding significant overhead. A single float division costed 505 cycles, more than twice the amount needed for an integer division. This results in inflation in latency per function and a hard precision floor that cannot be overcome with software (see \appref{app:new_anal}).
+\par Due to the above reasons, a fixed-step approach had to be used, but this results in both higher latency and error. At the precision floor however, the accuracy is maximised at the cost of latency.
+
 
 \begin{table}[H]
     \centering
@@ -593,12 +599,12 @@ As shown in \tabref{tab:hardware_results}, while RK4 does have higher execution 
     \label{tab:hardware_results}
     \begin{tabularx}{\columnwidth}{X X X X}
         \toprule
-        \textbf{Algorithm} & \textbf{Flash (Bytes)} & \textbf{SRAM (Bytes)} & \textbf{Execution Time} \\
+        \textbf{Algorithm} & \textbf{Flash (Bytes)} & \textbf{SRAM (Bytes)} & \textbf{Execution Time ($\mu$s)} \\
         \midrule
-        RK4 & $1392$ & $16$ & High\\
-        Trapezoidal & $1472$ & $16$ & High\\
-        Forward Euler & $1272$ & $16$ & Unstable\\
-        Backward Euler & $1296$ & $16$ & Unstable\\
+        RK4 & $1392$ & $16$ & $192.3125$\\
+        Trapezoidal & $1472$ & $16$ & $101.1875$ \\
+        Forward Euler & $1272$ & $16$ & $45.7500$ \\
+        Backward Euler & $1296$ & $16$ & $55.5625$ \\
         \bottomrule
     \end{tabularx}
 \end{table}
@@ -725,6 +731,7 @@ Taylor/Maclaurin series can be used for this purpose.
 \end{enumerate}
 The fixed-step RK4 method was determined to be the optimal choice for this specific hardware implementation based on the following analysis (summarized in Table \ref{tab:accuracy_results}). The code for this analysis can be found at: \url{https://github.com/gadepall/calculator/tree/main/analysis}
 Here, each algorithm was compared against the gold-standard MPFR library up to 50 decimal places. Accuracy is represented using Units in Last Place (ULP) measure.
+\label{app:codes}
 \begin{equation}
   \text{Error}_\text{ULP} = \frac{|y_\text{calc}-y_\text{true}|}{\epsilon\left(y_\text{true}\right)}
 \end{equation}
@@ -763,7 +770,7 @@ As per the results in Fig.\ref{fig:analysis}, RK4 demonstrates a clear dominance
 	\caption{Accuracy versus step size}
 	\label{fig:analysis2}
 \end{figure}
-
+\label{app:new_anal}
 \figref{fig:analysis2} shows an analysis of the variation of error with decrease in step size. While the initial parts of the graph show error as expected from \figref{fig:analysis}, this plot provides insight into the limitations of the hardware. On 8-bit architectures like on the ATMEGA328P, there is no hardware Floating Point Unit, thus floating point operations are emulated in software. As part of this \verb|avr-gcc| treats \verb|float| and \verb|double| as 32 bit floats. Thus, for RK4, it is seen that there is an error minima occurring at around $h = 0.03$. Using a step size smaller than $0.03$ only increases computation time. Also, since RK4 attains its error minima at a relatively high $h$ value, there is no practical use in implementing anything higher than a 4th order algorithm, as the hardware precision floor is the bottleneck. This further cements the objective suitability of RK4 for this purpose.
 
 %\subsection{Rejected Alternative Algorithms}
