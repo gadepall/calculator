@@ -1,0 +1,35 @@
+Answers to Reviewers' Comments
+
+Reviewer #3
+1. No validation against standard libraries: Include tables/plots showing accuracy vs step size (h). Provide hardware performance metrics (latency, cycles, RAM/Flash usage).
+A: Added Figure 4 and its following paragraph to plot and analyse accuracy vs step size. Hardware performance metrics are given in Section IV and Table IX, analysing Flash, SRAM and latency. Hardware precision floor is detailed in Section IV and Appendix A.
+
+2. What is the execution time per function?
+A: Metrics added in Section IV and Table IX.
+
+3. Is floating-point emulation used? If yes, what is the overhead?
+A: Floating-point emulation is used, and the cost is discussed in Section IV.
+
+4. Power consumption is not discussed.
+A: Could not be analysed in the current timeframe and will be measured in future work.
+
+5. The claim of a “unified framework” needs stronger justification: Similar ideas exist in numerical com
+A: Final paragraphs of Section I have been reworked to focus on the reformulation of the numerical computing concept as a unified software architecture instead. Section IV and Appendix A focus on RK4 as the limit of precision on the chosen platform.
+
+6. Add quantitative comparisons (accuracy, speed, memory).
+A: Addressed in comment 1.
+
+7. Provide real hardware measurements.
+A: Addressed in comments 1 and 4.
+
+8: Strengthen novelty claim and related work discussion.
+A: Addressed in comment 5.
+
+9: Include error analysis and limitations.
+A: Added Section IV and added content to Appendix A to focus on hardware as well as methodological errors and limitations.
+
+
+Reviewer #5
+
+1. The mathematical equations needs to be explained more.
+A: Added equations 3-7 to explain working of RK4 on first-order differential equations. Reworked Appendix A-B 2.b to explain Bilinear Transform.
