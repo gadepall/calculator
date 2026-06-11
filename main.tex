@@ -52,9 +52,12 @@ In this paper, various algebraic and transcendental functions are implemented on
 
 \end{abstract}
 
+\iffalse
 \begin{IEEEkeywords}
 Scientific Calculator, Microcontroller, Runge-Kutta Method, Quake III Algorithm, Shunting Yard Algorithm, Embedded C. 
 \end{IEEEkeywords}
+\fi
+{\small\textit{\textbf{Index Terms—Scientific Calculator, Microcontroller, Runge-Kutta Method, Quake III Algorithm, Shunting Yard Algorithm, Embedded C.}}}
 
 \section{Introduction}
 %Microcontrollers often find application as the bridge between physical systems and discrete digital logic. This can be as control systems for robotic applications or state estimation for autonomous navigation, among many other applications.\cite{AkpunarBozkurt2026} Thus, 
@@ -66,7 +69,7 @@ This requires the design and implementation of algorithms capable of approximati
 %  An important aspect of digitising physical systems is the solving of differential equations.  
 %Digitally realising continuous-time dynamic systems is an important task in embedded systems engineering.
 %To evaluate the superiority of any numerical method, one must first consider the fundamental challenge of the Initial Value Problem (IVP). 
-
+\section{Literature Survey}
 Numerical methods for function approximation on hardware often prioritize either simplicity or specialized efficiency. Euler’s method 
 is the simplest to program, yet its first-order accuracy ($O(h)$) leads to significant numerical drift and instability unless excessively small step sizes are used \cite{grewal2014}. Second-order Runge-Kutta (RK2) methods improve precision but still feature much greater absolute error magnitudes than RK4 \cite{ahmad2015}.
 %[Appendix~\ref{appendix:comparison}]
@@ -75,12 +78,13 @@ Alternative approximation strategies such as Taylor series or Maclaurin expansio
 
 For specific transcendental functions, the CORDIC algorithm is highly efficient as it uses simple shift-and-add operations instead of multiplications. However, CORDIC is limited by specific convergence ranges and requires different recursive sequences for different classes of functions \cite{st_cordic_an5325}. Linear multistep methods like Adams-Bashforth can reduce function evaluations but are not self-starting and necessitate a queue of past history to be stored that increases memory usage \cite{grewal2014}. 
 
-More advanced structural equations and orthogonal collocation methods offer low levels of error but frequently involve complex and heavy computations or iterative non-linear solvers \cite{allamaa2023}. Similarly, adaptive methods like ode45 (used in MATLAB) provide excellent accuracy but introduce variable execution times that can cause unacceptable jitter in real-time environments, such as the those mentioned above \cite{AkpunarBozkurt2026}. 
+More advanced structural equations and orthogonal collocation methods offer low levels of error but frequently involve complex and heavy computations or iterative non-linear solvers \cite{allamaa2023}. Similarly, adaptive methods like ode45 (used in MATLAB) provide excellent accuracy but introduce variable execution times that can cause unacceptable jitter in real-time environments, such as those mentioned above \cite{AkpunarBozkurt2026}. 
 
 A fixed-step RK4 approach is superior for predictable performance under the constraints discussed in this work, ensuring that calculations complete reliably within strict sampling windows, such as those in robotics or flight controllers \cite{Murugesan2002}.
 Further,  the single-step nature of RK4 is more suitable for limited microcontrollers as it avoids the RAM overhead of managing past solution data.
 
 Despite extensive research into specialized hardware like FPGAs or complex applications such as GPS orbit computation and motor control, \rev{there is a lack of a unified framework for general scientific computing on constrained 8-bit platforms} \cite{Medjahed2024, AkpunarBozkurt2026}. Most related works in embedded systems treat different transcendental functions as separate implementation problems rather than a single unified mathematical structure \cite{Moroz2023}. 
+
 
 \rev{This work bridges that gap by demonstrating how a numerical computing concept, the reformulation of diverse scientific functions into high school-level ODEs, can be used as a unified, fixed-step software architecture. This provides a robust, high-precision, and conceptually accessible pedagogical and practical framework for relatively limited microcontrollers. The proposed algorithms are then validated by implementing a scientific calculator using the ATMEGA328P.}
 
@@ -228,6 +232,9 @@ y_n = n y_{n-1}
 
 \begin{table*}[htbp]
 \centering
+\caption{RK4 Update Equations for Single-Variable Functions}
+\label{tab:rk4_single}
+
 \renewcommand{\arraystretch}{1.4}
 \setlength{\tabcolsep}{6pt}
 \begin{tabular}{lccccc}
@@ -271,8 +278,6 @@ $y_n+\tfrac{1}{6}(k_1+2k_2+2k_3+k_4)$ \\
 
 \bottomrule
 \end{tabular}
-\caption{RK4 Update Equations for Single-Variable Functions}
-\label{tab:rk4_single}
 \end{table*}
 
 \subsection{Expression Parsing}
@@ -291,17 +296,17 @@ Instructions for installation of a software based prototype for testing the algo
 
 \tabref {tab:materials}
 lists the components required for the scientific calculator hardware.
-The Arduino-LCD connections are available in \tabref{tab:arduino-lcd}.  The calculator operates in two modes.  The set of functions and the respective keys for the two modes are listed in 
+ The calculator operates in two modes.  The set of functions and the respective keys for the two modes are listed in 
 Tables 
 \ref{tab:mode1}
 and
-\ref{tab:mode2}.
+\ref{tab:mode2}. The Arduino-LCD connections are available in \tabref{tab:arduino-lcd}. 
 The schematic for circuit connections is available in 
 \figref{fig:circuit_schematic} and the instructions for uploading the codes are available in 
 \appref{app:hardware}
 .
 \subsection{Button Matrix}
-The button matrix is a grid of push-buttons arranged in rows and columns. It allows multiple buttons to be connected to the microcontroller using fewer pins.
+The button matrix is a grid of push-buttons arranged in rows and columns \figref{fig:button_matrix}. It allows multiple buttons to be connected to the microcontroller using fewer pins.
 %\textbf{Working Principle:}
 \begin{itemize}
     \item The Arduino scans the matrix by activating each row (setting it LOW) one at a time while reading the columns.
@@ -419,10 +424,16 @@ C5 & A4 \\
 \end{tabular}
 \end{table}
 
+\begin{figure*}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{figs/schematic.jpg}
+    \caption{Schematic of Scientific Calculator}
+    \label{fig:circuit_schematic}
+\end{figure*}
+
 
 \begin{figure}[H]{
 \centering
-\caption{Button Matrix}
 \resizebox{0.51\textwidth}{!}{%
 \begin{circuitikz}
 \tikzstyle{every node}=[font=\large]
@@ -574,19 +585,15 @@ C5 & A4 \\
 \draw (3.5,12.75) to[short] (3.5,6.25);
 \end{circuitikz}%
 }
+\caption{Button Matrix}
+\label{fig:button_matrix}
+
 }
 
-\label{fig:my_label}
 \end{figure}
 %\subsection{Circuit Schematic}
 %The schematic for circuit connections is shown below,
-\begin{figure*}[htbp]
-    \centering
-    \includegraphics[width=\textwidth]{figs/schematic.jpg}
-    \caption{Schematic of Scientific Calculator}
-    \label{fig:circuit_schematic}
-\end{figure*}
-
+\vspace{0.5cm}
 \section{\rev{Limitations and Hardware Analysis}}
 \rev{
 \tabref{tab:hardware_results} details the hardware analysed using codes in \appref{app:codes}.
@@ -888,6 +895,8 @@ codes
 
 \begin{table}[H]
 \centering
+\caption{Hardware source code description}
+\label{tab:file_org}
 \small
 \begin{tabularx}{\columnwidth}{|l|X|}
 \hline
@@ -901,8 +910,6 @@ codes
 \texttt{pars.c/.h}  & Parser module for processing input from user and returning output. \\ \hline
 \texttt{timer.c/.h} & Hardware timer configuration and interface. \\ \hline
 \end{tabularx}
-\caption{Hardware source code description}
-\label{tab:file_org}
 \end{table}
 \IEEEtriggeratref{7}
 \bibliographystyle{IEEEtran}
