@@ -14,6 +14,8 @@
 \usepackage{hyperref}
 \usepackage{tabularx}
 \newcommand{\rev}[1]{{\color{black}#1}}
+\usepackage{caption}
+\captionsetup{labelsep=period}
 \lstset{
   basicstyle=\ttfamily\small,
   keywordstyle=\color{blue}\bfseries,
@@ -306,7 +308,7 @@ The schematic for circuit connections is available in
 \appref{app:hardware}
 .
 \subsection{Button Matrix}
-The button matrix is a grid of push-buttons arranged in rows and columns \figref{fig:button_matrix}. It allows multiple buttons to be connected to the microcontroller using fewer pins.
+The button matrix is a grid of push-buttons arranged in rows and columns as in \figref{fig:button_matrix}. It allows multiple buttons to be connected to the microcontroller using fewer pins, as per \tabref{tab:keypad}.
 %\textbf{Working Principle:}
 \begin{itemize}
     \item The Arduino scans the matrix by activating each row (setting it LOW) one at a time while reading the columns.
@@ -755,7 +757,7 @@ where $y_\text{calc}$ is the value of the function calculated by the algorithm b
 As per the results in Fig.\ref{fig:analysis}, RK4 demonstrates a clear dominance, with both maximum and average errors being many orders of magnitude less than the other algorithms. The Euler methods demonstrate an increasing drift from the true value with increase in input value, while the trapezoidal method, while stable in its error variation, featured much more absolute error than RK4. As expected, RK2 showed similar error variation as RK4 but much greater in magnitude.
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=\columnwidth]{figs/analysis.png}
+	\includegraphics[width=\columnwidth]{figs/analysis2.png}
 	\caption{Comparison of the accuracy of the algorithms}
 	\label{fig:analysis}
 \end{figure}
@@ -781,7 +783,7 @@ As per the results in Fig.\ref{fig:analysis}, RK4 demonstrates a clear dominance
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=\columnwidth]{figs/analysis4.png}
+	\includegraphics[width=\columnwidth]{figs/analysis5.png}
     \caption{\rev{Accuracy versus step size}}
 	\label{fig:analysis2}
 \end{figure}

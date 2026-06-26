@@ -3,9 +3,10 @@ import mpmath as mp
 import pandas as pd
 import matplotlib.pyplot as plt
 
+
 mp.mp.dps = 50
-N = 318
-END = 20
+N = 100
+END = 6.3
 
 def get_err(est, ref):
     ref = float(ref)
@@ -136,11 +137,12 @@ for k, (ts, ys) in res.items():
     plt.plot(ts, errs, cols.get(k, '-'), label=k, lw=lw, alpha=0.8)
 
 plt.yscale('log')
-plt.title(f'Accuracy Comparison: ODE Solvers vs Difference Equation\n(Step size h={h:.4f})', fontsize=14)
-plt.xlabel('Input (x)', fontsize=12)
-plt.ylabel('Error (ULP) - Log Scale', fontsize=12)
+plt.title(f'Accuracy Comparison: ODE Solvers vs Difference Equation\n(Step size h={h:.4f})', fontsize=27)
+plt.xlabel('Input (x)', fontsize=22)
+plt.ylabel('Error (ULP) - Log Scale', fontsize=22)
 plt.grid(True, which="both", ls="-", alpha=0.2)
-plt.legend(fontsize=10)
+plt.tick_params(axis='both', which='major', labelsize=19)
+plt.legend(fontsize=18)
 plt.tight_layout()
 
 plt.savefig('../figs/analysis2.png', dpi=300)

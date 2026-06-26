@@ -2,6 +2,17 @@ import numpy as np
 import mpmath as mp
 import matplotlib.pyplot as plt
 
+plt.rcParams.update({
+    'font.size': 14,         # General default font size
+    'axes.titlesize': 23,    # Plot title size
+    'axes.labelsize': 22,    # X and Y label size
+    'xtick.labelsize': 19,   # X axis tick numbers
+    'ytick.labelsize': 19,   # Y axis tick numbers
+    'legend.fontsize': 18,   # Legend text size
+    'lines.markersize': 10   # Global marker size
+})
+
+
 mp.mp.dps = 50
 
 START = 1.0
@@ -134,7 +145,7 @@ styles = {
 }
 
 for algo, errors in max_errors.items():
-    plt.loglog(h_values, errors, styles[algo], label=algo, markersize=6)
+    plt.loglog(h_values, errors, styles[algo], label=algo)
 
 plt.xlabel('Step Size $h$ (Log Scale)')
 plt.ylabel('Maximum ULP Error (Log Scale)')
@@ -143,5 +154,5 @@ $x \in [1.0, 5.0]$ (ATMEGA328P Limits)''')
 plt.grid(True, which="both", ls="--", alpha=0.5)
 plt.legend()
 plt.gca().invert_xaxis()
-plt.savefig("../figs/analysis4.png")
+plt.savefig("../figs/analysis5.png")
 plt.show()
